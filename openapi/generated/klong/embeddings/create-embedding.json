@@ -1,0 +1,131 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "小恐龙 API",
+    "version": "1.0.0",
+    "description": "小恐龙 API Embeddings 兼容接口"
+  },
+  "servers": [{ "url": "https://api.klong.lat/v1" }],
+  "paths": {
+    "/embeddings": {
+      "post": {
+        "summary": "创建向量嵌入",
+        "description": "将输入文本转换为向量，适用于语义检索、RAG 和相似度计算。",
+        "operationId": "createEmbedding",
+        "tags": ["嵌入（Embeddings）/OpenAI 兼容格式"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmbeddingRequest"
+              },
+              "example": {
+                "model": "Qwen/Qwen3-Embedding-8B",
+                "input": "小恐龙 API 文档"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "向量结果",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmbeddingResponse"
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": { "type": "http", "scheme": "bearer" }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "请求参数错误",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "API Key 无效或未提供",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "EmbeddingRequest": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "type": "string",
+            "example": "Qwen/Qwen3-Embedding-8B"
+          },
+          "input": {
+            "description": "输入文本或文本数组",
+            "oneOf": [
+              { "type": "string" },
+              { "type": "array", "items": { "type": "string" } }
+            ]
+          }
+        },
+        "required": ["model", "input"]
+      },
+      "EmbeddingResponse": {
+        "type": "object",
+        "properties": {
+          "object": { "type": "string", "example": "list" },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "object": { "type": "string", "example": "embedding" },
+                "embedding": {
+                  "type": "array",
+                  "items": { "type": "number" }
+                },
+                "index": { "type": "integer" }
+              }
+            }
+          },
+          "model": { "type": "string" },
+          "usage": {
+            "type": "object",
+            "properties": {
+              "prompt_tokens": { "type": "integer" },
+              "total_tokens": { "type": "integer" }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": { "type": "string" },
+              "type": { "type": "string" },
+              "code": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,41 @@
+---
+title: Cursor 接入教程
+description: 在 Cursor 中配置 Klong API
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+Cursor 支持自定义 OpenAI 兼容接口。不同版本界面可能略有差异，请以当前客户端设置页为准。
+
+## 需要准备
+
+| 配置项 | 示例 |
+| --- | --- |
+| API 地址 | `https://api.klong.lat/v1` |
+| API Key | `sk-your-api-key` |
+| 推荐模型 | `gpt-5.3-codex` |
+
+## 配置建议
+
+<Steps>
+  <Step title="进入模型设置">
+    打开 Cursor 设置，找到 Models、AI Provider 或 API Key 配置区域。
+  </Step>
+  <Step title="启用自定义 OpenAI 接口">
+    选择 OpenAI Compatible 或 Override OpenAI Base URL。
+  </Step>
+  <Step title="填写地址和 Key">
+    Base URL 填写 `https://api.klong.lat/v1`，API Key 填写你自己的 `sk-...`。
+  </Step>
+  <Step title="填写模型名">
+    代码场景推荐 `gpt-5.3-codex`，日常对话可用 `gpt-5.4-mini`。
+  </Step>
+</Steps>
+
+## 排查
+
+| 问题 | 处理方式 |
+| --- | --- |
+| 请求失败 | 先用 curl 测试同一个 Key 和模型 |
+| 模型不可选 | 手动填写模型名，确保拼写完全一致 |
+| 仍走官方接口 | 检查 Base URL override 是否生效 |

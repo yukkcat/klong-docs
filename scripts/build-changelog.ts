@@ -7,7 +7,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 // Configuration
-const SOURCE_REPO = process.env.SOURCE_REPO || 'QuantumNous/new-api';
+const SOURCE_REPO = process.env.SOURCE_REPO || '';
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN || '';
 const MAX_RELEASES = 30;
 
@@ -268,6 +268,11 @@ function formatReleasesMarkdown(
 
 async function generateChangelog() {
   console.log('\n🚀 Starting to generate Changelog...\n');
+
+  if (!SOURCE_REPO) {
+    console.log('Changelog generation skipped: SOURCE_REPO is not configured.');
+    return;
+  }
 
   try {
     // Fetch releases data

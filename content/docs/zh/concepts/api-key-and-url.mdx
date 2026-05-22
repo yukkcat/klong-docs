@@ -1,0 +1,84 @@
+---
+title: API 地址与 API Key
+description: 理解根地址、OpenAI Base URL、接口路径、鉴权请求头和密钥安全
+---
+
+调用小恐龙 API 时，最先要确认的是两个值：**API 地址** 和 **API Key**。地址最容易填错，因为不同客户端对同一个地址会用不同叫法。
+
+## 先记住两种地址
+
+小恐龙 API 的默认接口根地址是：
+
+```txt
+https://api.klong.lat
+```
+
+OpenAI 兼容调用的 Base URL 是：
+
+```txt
+https://api.klong.lat/v1
+```
+
+简单说：**看到 Host、Server URL、接口地址，通常填根地址；看到 OpenAI Base URL、API Base、`base_url`、`baseURL`，通常填带 `/v1` 的地址。**
+
+## 完整接口地址怎么组成
+
+完整接口地址由 **接口根地址 + 接口路径** 组成：
+
+| 接口 | 完整地址 |
+| --- | --- |
+| 模型列表 | `https://api.klong.lat/v1/models` |
+| 聊天补全 | `https://api.klong.lat/v1/chat/completions` |
+| Responses | `https://api.klong.lat/v1/responses` |
+| Embeddings | `https://api.klong.lat/v1/embeddings` |
+
+不要把完整接口地址填进 Base URL 字段。比如客户端让你填 `Base URL` 时，通常填 `https://api.klong.lat/v1`，不要填到 `https://api.klong.lat/v1/chat/completions`。
+
+## 客户端里常见怎么填
+
+不同客户端的字段名不完全一样，可以按下面判断：
+
+| 客户端字段名 | 应该填什么 |
+| --- | --- |
+| 接口地址 / API 地址 / API Host / Server URL | `https://api.klong.lat` |
+| OpenAI Base URL / API Base / `base_url` / `baseURL` | `https://api.klong.lat/v1` |
+| Claude Base URL / Anthropic Base URL | `https://api.klong.lat` |
+| API Key / Secret Key / Token | 你的 `sk-...` Key |
+| Model / Model ID | 例如 `gpt-5.4` |
+| Provider / API Type | OpenAI Compatible / OpenAI 兼容 |
+
+<Callout type="tip" title="如果客户端会自动补 /v1">
+  有些客户端写着“填 API 地址，不要带 /v1”，或者保存后会自动请求 `/v1/models`。这种情况下填根地址 `https://api.klong.lat`。
+  如果客户端明确写 OpenAI Base URL，或代码里写 `base_url` / `baseURL`，就填 `https://api.klong.lat/v1`。
+</Callout>
+
+## API Key 是什么
+
+API Key 是你的调用凭证。它类似一把钥匙，用来证明这次请求属于你的账号。
+
+调用时，Key 放在 HTTP 请求头里：
+
+```txt
+Authorization: Bearer sk-your-api-key
+```
+
+其中 `sk-your-api-key` 是示例占位符，实际调用时要替换成你自己的 Key。
+
+## Key 安全
+
+不要把真实 API Key 写进公开网页、GitHub 仓库、截图或群聊里。
+
+如果你怀疑 Key 泄漏，应该立即停用或删除旧 Key，并重新生成一个新 Key。
+
+<Callout type="warn" title="不要公开真实 Key">
+  文档、教程、截图里统一使用 `sk-your-api-key`。真实 Key 只应该保存在自己的客户端、服务器环境变量或可信配置里。
+</Callout>
+
+## 最小 curl 示例
+
+```bash
+curl https://api.klong.lat/v1/models \
+  -H "Authorization: Bearer sk-your-api-key"
+```
+
+如果这个请求成功，说明地址和 API Key 基本可用。

@@ -1,25 +1,19 @@
 import { createMDX } from 'fumadocs-mdx/next';
 
 const withMDX = createMDX();
+const isStandaloneBuild = process.env.NEXT_OUTPUT_STANDALONE === '1';
 
 /** @type {import('next').NextConfig} */
 const config = {
   reactStrictMode: true,
   poweredByHeader: false,
+  ...(isStandaloneBuild ? { output: 'standalone' } : {}),
   experimental: {
     serverActions: {
       allowedOrigins: [
         'localhost:3000',
-        // newapi.pro domains
-        'docs.newapi.pro',
-        'newapi.pro',
-        'www.newapi.pro',
-        // newapi.ai domains
-        'docs.newapi.ai',
-        'newapi.ai',
-        'www.newapi.ai',
-        // Vercel preview
-        'new-api-docs-v1.vercel.app',
+        'docs.klong.lat',
+        'klong-docs.vercel.app',
       ],
     },
   },
@@ -27,7 +21,7 @@ const config = {
     return [
       {
         // Apply charset to HTML pages
-        source: '/:lang(en|zh|ja)/:path*',
+        source: '/:lang(zh)/:path*',
         headers: [
           {
             key: 'Content-Type',

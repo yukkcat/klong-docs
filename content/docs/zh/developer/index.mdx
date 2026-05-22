@@ -1,0 +1,77 @@
+---
+title: 开发者指南
+description: 面向开发者的小恐龙 API 调用流程、鉴权、模型和代码示例
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import {
+  BadgeDollarSign,
+  KeyRound,
+  MessageSquareCode,
+  PlugZap,
+  Sparkles,
+  Terminal,
+} from 'lucide-react';
+
+小恐龙 API 提供 OpenAI 兼容接口。用户只需要拿到 **API 地址**、**API Key** 和 **模型名称**，就可以接入到代码、客户端或编程助手里。
+
+如果你还不理解 API Key、Base URL、token、模型输入输出这些概念，建议先看 [基础概念](/zh/docs/concepts)。
+
+## 接入参数
+
+| 参数 | 示例 | 说明 |
+| --- | --- | --- |
+| 默认接口地址 | `https://api.klong.lat` | 适合填写接口地址、Host、Server URL 一类字段 |
+| OpenAI Base URL | `https://api.klong.lat/v1` | 适合 OpenAI SDK、`base_url`、`baseURL` 或 OpenAI Compatible 客户端 |
+| API Key | `sk-your-api-key` | 在账号或令牌页面生成，调用时放入 `Authorization` 请求头 |
+| 推荐聊天模型 | `gpt-5.4` / `gpt-5.5` / `claude-opus-4-7` | 日常聊天、总结、复杂分析和高质量输出 |
+| 推荐编程模型 | `gpt-5.5` / `claude-opus-4-7` | 建议在 OpenAI Codex CLI 或 Claude Code 下使用 |
+
+## 开发者阅读顺序
+
+<Cards>
+  <Card
+    icon={<PlugZap />}
+    title="开始接入"
+    description="从创建测试令牌到跑通模型列表和第一次聊天请求。"
+    href="/zh/docs/developer/quickstart"
+  />
+  <Card
+    icon={<KeyRound />}
+    title="鉴权与安全"
+    description="说明 API Key 放在哪里、怎么管理、哪些场景不要暴露密钥。"
+    href="/zh/docs/developer/authentication"
+  />
+  <Card
+    icon={<MessageSquareCode />}
+    title="OpenAI 兼容调用"
+    description="curl、Python、JavaScript 的基础调用示例。"
+    href="/zh/docs/developer/openai-compatible"
+  />
+  <Card
+    icon={<Sparkles />}
+    title="模型列表"
+    description="当前可用模型和不同场景的推荐选择。"
+    href="/zh/docs/developer/models"
+  />
+  <Card
+    icon={<BadgeDollarSign />}
+    title="价格与限制"
+    description="计费单位、额度、限流和余额说明。"
+    href="/zh/docs/developer/pricing"
+  />
+  <Card
+    icon={<Terminal />}
+    title="AI 模型接口"
+    description="查模型调用接口的参数、请求体、响应结构和在线操练入口。"
+    href="/zh/docs/api"
+  />
+</Cards>
+
+## 开发者最常用的三个接口
+
+| 接口 | 用途 | 文档 |
+| --- | --- | --- |
+| `GET /v1/models` | 查询当前 Key 可用模型 | [模型列表](/zh/docs/api/ai-model/models/list/listmodels) |
+| `POST /v1/chat/completions` | 聊天、问答、编程助手 | [Chat Completions](/zh/docs/api/ai-model/chat/openai/createchatcompletion) |
+| `POST /v1/responses` | Responses 格式工具和 Agent | [Responses](/zh/docs/api/ai-model/chat/openai/createresponse) |

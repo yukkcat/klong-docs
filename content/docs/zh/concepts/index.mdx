@@ -1,0 +1,100 @@
+---
+title: 基础概念
+description: 先理解 API Key、Base URL、模型、Token、输入输出和常见客户端
+---
+
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+import {
+  AppWindow,
+  BrainCircuit,
+  Braces,
+  KeyRound,
+  MessageSquareText,
+  PlugZap,
+} from 'lucide-react';
+
+如果你只是拿到了一个 API Key，但还不确定该填在哪里、模型名是什么、token 为什么会影响费用，先看这一章。
+
+小恐龙 API 文档面向两类人：
+
+- **客户端用户**：想把小恐龙 API 填进 Claude Code、OpenAI Codex CLI、CC Switch、Cherry Studio、AionUi、OpenClaw 等工具里。
+- **开发者**：想用 OpenAI 兼容格式，通过代码调用模型、接入产品、做聊天、知识库或自动化。
+
+## 先记住三个词
+
+| 概念 | 示例 | 它解决什么问题 |
+| --- | --- | --- |
+| API 地址 | `https://api.klong.lat` | 告诉客户端或代码把请求发到哪里 |
+| OpenAI Base URL | `https://api.klong.lat/v1` | 给 OpenAI 兼容 SDK 或客户端使用 |
+| API Key | `sk-your-api-key` | 证明你有权限调用 API |
+| Model | `gpt-5.4` | 告诉 API 这次要调用哪个模型 |
+
+大多数接入问题，本质上都是这三个值填错了：地址不对、Key 不对、模型名不对。
+
+## 推荐阅读顺序
+
+<Cards>
+  <Card
+    icon={<KeyRound />}
+    title="API 地址与 API Key"
+    description="解释根地址、/v1 Base URL、请求头和 Key 为什么不能公开。"
+    href="/zh/docs/concepts/api-key-and-url"
+  />
+  <Card
+    icon={<BrainCircuit />}
+    title="模型与 Token"
+    description="理解模型、上下文、输入 token、输出 token 和费用关系。"
+    href="/zh/docs/concepts/models-and-tokens"
+  />
+  <Card
+    icon={<MessageSquareText />}
+    title="输入与输出"
+    description="说明 messages、input、embedding、JSON 响应和流式输出。"
+    href="/zh/docs/concepts/request-and-response"
+  />
+  <Card
+    icon={<AppWindow />}
+    title="常见客户端"
+    description="Claude Code、Codex CLI、CC Switch、Cherry Studio 等工具怎么分类。"
+    href="/zh/docs/concepts/clients"
+  />
+  <Card
+    icon={<Braces />}
+    title="OpenAI 兼容格式"
+    description="解释 Chat Completions、Responses、Embeddings 的区别。"
+    href="/zh/docs/concepts/openai-compatible"
+  />
+  <Card
+    icon={<PlugZap />}
+    title="开始接入"
+    description="理解概念后，按步骤跑通模型列表和第一次请求。"
+    href="/zh/docs/developer/quickstart"
+  />
+</Cards>
+
+## 小恐龙 API 的调用流程
+
+<Steps>
+  <Step title="准备 API Key">
+    在控制台生成自己的 Key。文档中的 `sk-your-api-key` 都只是示例占位符。
+  </Step>
+  <Step title="选择调用方式">
+    如果使用客户端，按客户端教程填写 Base URL、Key 和模型名。如果写代码，使用 OpenAI 兼容 SDK 或 curl。
+  </Step>
+  <Step title="先查询模型">
+    调用 `GET /v1/models`，确认当前 Key 能看到哪些模型。
+  </Step>
+  <Step title="发送第一次请求">
+    常规聊天使用 `POST /v1/chat/completions`，部分新工具可能使用 `POST /v1/responses`。
+  </Step>
+</Steps>
+
+## 文档分工
+
+| 分区 | 负责回答 |
+| --- | --- |
+| 基础概念 | 这些词是什么意思，我该怎么理解 |
+| 开发者指南 | 我怎么用代码调用 |
+| 客户端教程 | 我怎么把 Key 填进具体软件 |
+| AI 模型接口 / 在线调试 | 模型接口的参数、请求体、响应结构是什么 |

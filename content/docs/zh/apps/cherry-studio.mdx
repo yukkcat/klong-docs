@@ -1,58 +1,99 @@
 ---
-title: Cherry Studio - 桌面 AI 客户端
-description: Cherry Studio 教程 — 将桌面 AI 客户端对接 New API，一键填入 API Key。内置 30+ 专业 AI 助手，覆盖多种工作场景。
+title: Cherry Studio 接入教程
+description: 在 Cherry Studio 桌面客户端中配置小恐龙 API
 ---
 
-<Callout type="info" title="聊天设置选项">
-  在 New API
-  控制台的系统设置->聊天设置中，可添加如下快捷选项，便于在令牌管理页一键填充到
-  Cherry Studio：
+Cherry Studio 是最适合普通用户上手的桌面 AI 客户端。它支持 OpenAI Compatible / OpenAI 兼容服务商，用户只要填 Base URL、API Key 和模型名，就可以用小恐龙 API 的模型聊天、写作、翻译、读文件。
+
+## 需要准备
+
+| 配置项 | 填写值 |
+| --- | --- |
+| 服务商类型 | OpenAI Compatible / OpenAI 兼容 |
+| API 地址 / Base URL | `https://api.klong.lat/v1` |
+| API Key | `sk-your-api-key` |
+| 推荐聊天模型 | `gpt-5.4` |
+| 高质量模型 | `gpt-5.5` 或 `claude-opus-4-7` |
+
+<Callout type="warn" title="不要使用文档里的占位 Key">
+  `sk-your-api-key` 只是示例。实际配置时，请填写你在小恐龙 API 账号页面创建的真实 API Key。
 </Callout>
 
-    ```json
-    { "Cherry Studio": "cherrystudio://providers/api-keys?v=1&data={cherryConfig}" }
-    ```
+## 图文配置步骤
 
-<Callout type="info">
-  🍒 Cherry Studio 是一款功能强大的桌面 AI 客户端，专为专业用户设计，集成了 30+
-  行业智能助手，能够满足各种工作场景的需求，显著提升工作效率。
-</Callout>
+### 1. 复制 API Key
 
-- 官网地址：[https://cherry-ai.com](https://cherry-ai.com/)
-- 下载地址：[https://cherry-ai.com/download](https://cherry-ai.com/download)
-- 官方文档：[https://docs.cherry-ai.com](https://docs.cherry-ai.com)
+先到小恐龙 API 的账号或令牌页面创建一个可用令牌。给客户看的教程里，建议明确告诉他们“复制自己的 Key”，不要让他们把截图里的内容当成真实 Key。
 
-## NewAPI 接入方法
+![复制 API Key](/assets/cherry_studio/copy_api_key.png)
 
-### 参数填写
+### 2. 添加服务商
 
-提供商类型：NewAPI 支持的类型  
-API 密钥：于 NewAPI 获取  
-API 地址：NewAPI 站点地址
+打开 Cherry Studio，进入设置里的模型服务商页面，点击添加服务商。服务商类型选择 OpenAI Compatible、OpenAI 兼容或自定义 OpenAI。
 
-请使用您自己部署的 New API，或确认服务方具备合法上游授权和合规义务的 New API 服务。不要将来源不明的 API 地址或密钥接入生产环境。
+![添加服务商](/assets/cherry_studio/add_provider.png)
 
-### 图文指引
+填写时按下面这样对应：
 
-1. 在 NewAPI 中复制 API key
-   ![复制 API 密钥](/assets/cherry_studio/copy_api_key.png)
+| Cherry Studio 字段 | 填写内容 |
+| --- | --- |
+| 名称 | `小恐龙 API` |
+| 类型 | `OpenAI Compatible` |
+| API 地址 / Base URL | `https://api.klong.lat/v1` |
+| API Key | 你的 `sk-...` |
 
-2. 添加提供商
-   ![添加供应商](/assets/cherry_studio/add_provider.png)
+如果 Cherry Studio 的版本提示“不要带 /v1”或会自动补 `/v1`，就改填 `https://api.klong.lat`。多数 OpenAI Compatible 配置页直接填 `https://api.klong.lat/v1`。
 
-3. 添加模型
-   ![添加模型](/assets/cherry_studio/add_models.png)
+### 3. 添加模型
 
-4. 返回聊天页面
-   ![切换聊天页面](/assets/cherry_studio/back_to_chat.png)
+如果 Cherry Studio 没有自动拉到模型列表，就手动添加模型名。
 
-5. 切换 NewAPI 模型
-   ![切换模型](/assets/cherry_studio/switch_model.png)
+![添加模型](/assets/cherry_studio/add_models.png)
 
-## 在 Cherry Studio 中画图
+推荐先添加：
 
-1. 首先添加支持画图的模型
-   ![画图模型](/assets/cherry_studio/add_paint_models.png)
+| 场景 | 模型 |
+| --- | --- |
+| 日常聊天 | `gpt-5.4` |
+| 高质量输出 | `gpt-5.5` |
+| 复杂推理 / 长文档 | `claude-opus-4-7` |
+| 快速低成本 | `gemini-3.0-flash-low` |
 
-2. 画图
-   ![画图](/assets/cherry_studio/paint.png)
+### 4. 回到聊天页面
+
+配置完成后回到聊天页面，准备选择刚刚添加的小恐龙 API 服务商和模型。
+
+![返回聊天页面](/assets/cherry_studio/back_to_chat.png)
+
+### 5. 切换到小恐龙 API 模型
+
+在模型选择器里选中刚才添加的模型，例如 `gpt-5.4`，发送一句“你好，帮我介绍一下你自己”测试返回。
+
+![切换模型](/assets/cherry_studio/switch_model.png)
+
+## 画图模型配置
+
+如果小恐龙 API 提供图像模型，也可以在 Cherry Studio 里单独添加画图模型。注意画图模型的接口、参数和聊天模型可能不同，先确认你的模型是否支持图片生成。
+
+![添加画图模型](/assets/cherry_studio/add_paint_models.png)
+
+添加完成后，在绘图页面选择对应模型测试。
+
+![使用画图](/assets/cherry_studio/paint.png)
+
+## 怎么确认请求走的是小恐龙 API
+
+1. 在 Cherry Studio 发一条普通测试消息。
+2. 打开小恐龙 API 的使用记录或用量页面。
+3. 确认日志里出现同一个模型名和一次新的请求。
+4. 如果没有日志，说明客户端可能还在走其他服务商，回到服务商设置检查 Base URL 和模型选择。
+
+## 常见问题
+
+| 问题 | 处理方式 |
+| --- | --- |
+| 模型列表为空 | 手动添加模型名，或检查 API Key 是否有模型列表权限 |
+| 401 | API Key 填错、过期，或复制时多了空格 |
+| 404 | 优先检查 Base URL：OpenAI Compatible 通常填 `https://api.klong.lat/v1`；如果客户端自动补 `/v1`，则填 `https://api.klong.lat` |
+| model not found | 模型名要和小恐龙 API 模型列表完全一致 |
+| 能聊天但不能画图 | 聊天模型和画图模型不是同一种能力，需要换支持图片生成的模型 |

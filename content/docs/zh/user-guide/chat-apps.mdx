@@ -1,0 +1,68 @@
+---
+title: 聊天应用集成
+description: 把小恐龙 API 接入支持 OpenAI 兼容接口的聊天客户端
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+很多聊天应用都支持自定义 OpenAI 兼容接口。只要应用里能填写 `Base URL`、`API Key` 和 `Model`，通常就可以接入小恐龙 API。
+
+## 推荐先准备
+
+| 配置项 | 示例 |
+| --- | --- |
+| 默认接口地址 | `https://api.klong.lat` |
+| OpenAI Base URL | `https://api.klong.lat/v1` |
+| API Key | `sk-your-api-key` |
+| 模型 | `gpt-5.4`、`gpt-5.5`、`claude-opus-4-7` 等 |
+
+<Callout type="info">
+  如果聊天应用要求填写 OpenAI API Key，就填你在令牌管理中创建的小恐龙 API Key。字段写着 OpenAI Base URL 时填 `https://api.klong.lat/v1`；字段写着 API 地址或 Host，且客户端会自动补 `/v1` 时填 `https://api.klong.lat`。
+</Callout>
+
+## 一键导入
+
+部分控制台会在令牌页面提供「导入」或「聊天」按钮，用来把当前令牌快速导入到支持的聊天应用。
+
+![一键导入配置](/assets/guide/import-chat-config.png)
+
+常见流程：
+
+1. 进入令牌管理页面。
+2. 找到要使用的令牌。
+3. 点击右侧的导入、聊天或配置按钮。
+4. 选择目标应用。
+5. 跳转后确认配置并保存。
+
+## 手动配置
+
+如果目标应用不支持一键导入，就按下面方式手动填写。
+
+1. 打开聊天应用的设置页面。
+2. 找到模型服务、API 提供商、自定义 OpenAI 或 OpenAI Compatible。
+3. 如果字段是 OpenAI Base URL，填 `https://api.klong.lat/v1`；如果字段说明不要带 `/v1`，填 `https://api.klong.lat`。
+4. API Key 填你的 `sk-...`。
+5. 模型名称填控制台可用模型列表里的模型名。
+6. 保存后发一句简单消息测试。
+
+## 常见客户端
+
+| 客户端 | 建议 |
+| --- | --- |
+| Cherry Studio | 适合桌面聊天、多模型切换和日常使用 |
+| Claude Code | 适合命令行编码场景 |
+| OpenAI Codex CLI | 适合 OpenAI 兼容代码助手场景 |
+| CC Switch | 适合统一管理多个命令行 AI 工具 |
+| AionUi | 适合本地桌面办公 Agent |
+| OpenClaw | 适合自托管智能助手平台 |
+
+更具体的填写位置，可以看 [客户端教程](/zh/docs/apps)。
+
+## 排查方法
+
+| 现象 | 处理方式 |
+| --- | --- |
+| 应用提示 Key 无效 | 重新复制令牌，确认没有多余空格 |
+| 应用提示模型不存在 | 换成控制台里明确可用的模型名 |
+| 应用没有回复 | 先到 API 操练场验证 Key，再检查应用 Base URL |
+| 应用只支持官方 OpenAI | 找“自定义 API 地址”或“OpenAI Compatible”选项 |

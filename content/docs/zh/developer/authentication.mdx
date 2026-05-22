@@ -1,0 +1,62 @@
+---
+title: API 地址与鉴权
+description: API Key 的请求头格式、保存方式和安全建议
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+所有需要身份认证的接口都通过 API Key 鉴权。OpenAI 兼容接口使用 `Authorization` 请求头。
+
+## 请求头格式
+
+```http
+Authorization: Bearer sk-your-api-key
+Content-Type: application/json
+```
+
+示例：
+
+```bash
+curl https://api.klong.lat/v1/models \
+  -H "Authorization: Bearer sk-your-api-key"
+```
+
+## 获取 API Key
+
+请按小恐龙 API 的开通流程获取 Key：
+
+<Steps>
+  <Step title="登录账号页面">
+    进入小恐龙 API 的账号页面或令牌页面。
+  </Step>
+  <Step title="创建令牌">
+    打开 API Key、令牌管理或类似页面，创建新令牌。
+  </Step>
+  <Step title="复制并保存">
+    复制 `sk-...` 格式的 Key。离开页面后可能无法再次查看完整 Key。
+  </Step>
+  <Step title="设置权限">
+    如果平台支持，建议给不同项目设置不同额度、模型权限和过期时间。
+  </Step>
+</Steps>
+
+## 环境变量
+
+服务端项目建议用环境变量保存密钥：
+
+```bash
+export OPENAI_API_KEY="sk-your-api-key"
+export OPENAI_BASE_URL="https://api.klong.lat/v1"
+```
+
+<Callout type="warn" title="不要泄露 Key">
+  不要把 API Key 写进前端网页、公开仓库、截图、群聊或客户可下载的配置文件里。Key 泄露后应立即删除旧 Key 并重新创建。
+</Callout>
+
+## 常见鉴权错误
+
+| 状态码 | 可能原因 | 处理方式 |
+| --- | --- | --- |
+| `401` | Key 缺失、错误或请求头格式不对 | 检查是否使用 `Authorization: Bearer ...` |
+| `403` | 当前 Key 无权访问模型或接口 | 检查账号状态、分组和模型权限 |
+| `429` | 请求过快或额度不足 | 降低并发，检查余额和限流规则 |

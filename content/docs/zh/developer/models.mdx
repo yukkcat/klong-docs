@@ -1,0 +1,85 @@
+---
+title: 模型列表与推荐
+description: 小恐龙 API 当前可用模型和场景推荐
+---
+
+小恐龙 API 的可用模型以 `GET /v1/models` 返回为准。用户在客户端里填写的模型名，必须和模型列表里的名称完全一致。
+
+## 推荐模型
+
+| 场景 | 推荐模型 | 说明 |
+| --- | --- | --- |
+| 日常聊天 | `gpt-5.4` | 适合大多数问答、总结、写作和普通对话 |
+| 高质量聊天 | `gpt-5.5` / `claude-opus-4-7` | 适合复杂分析、长文档、重要输出 |
+| 代码任务 | `gpt-5.5` / `claude-opus-4-7` | 建议在 OpenAI Codex CLI 或 Claude Code 下使用 |
+| 低成本快速调用 | `gemini-3.0-flash-low` | 适合批量、低延迟、成本敏感任务 |
+| DeepSeek | `deepseek-v4-pro` | 适合中文问答、推理和代码任务 |
+| 图像生成 | `gpt-image-2` | 适合文生图和通用图片生成 |
+| 高质量图像 | `gpt-image-2-vip` | 适合更高质量图片生成需求 |
+| 向量嵌入 | `Qwen/Qwen3-Embedding-8B` | 适合搜索、RAG、相似度匹配 |
+| 重排序 | `Qwen/Qwen3-Reranker-8B` | 适合检索结果排序和 RAG 优化 |
+
+<Callout type="tip" title="不知道选哪个">
+  普通聊天先用 `gpt-5.4`。质量要求更高时用 `gpt-5.5` 或 `claude-opus-4-7`。代码任务建议放到 Claude Code 或 OpenAI Codex CLI 里跑，Claude Code 优先试 `claude-opus-4-7`，Codex CLI 优先试 `gpt-5.5`。
+</Callout>
+
+## OpenAI / Codex 系列
+
+| 模型 | owned_by | 推荐用途 |
+| --- | --- | --- |
+| `gpt-5` | `codex` | 通用高质量任务 |
+| `gpt-5-1` | `custom` | 通用任务，可按实际体验选择 |
+| `gpt-5-2` | `custom` | 通用任务，可按实际体验选择 |
+| `gpt-5-3` | `custom` | 通用任务，可按实际体验选择 |
+| `gpt-5-5` | `custom` | 高质量输出、复杂任务 |
+| `gpt-5.2` | `codex` | 编程与通用任务 |
+| `gpt-5.4` | `codex` | 高质量通用任务 |
+| `gpt-5.5` | `custom` | 复杂推理、长文档和重要输出 |
+
+## Claude 系列
+
+| 模型 | owned_by | 推荐用途 |
+| --- | --- | --- |
+| `claude-haiku-4-5` | `custom` | 快速响应、轻量任务 |
+| `claude-opus-4-7` | `vertex-ai` | 高质量推理、复杂写作、重要任务 |
+
+## Gemini 系列
+
+| 模型 | owned_by | 推荐用途 |
+| --- | --- | --- |
+| `gemini-2.5-flash` | `vertex-ai` | 快速任务、多模态轻量场景 |
+| `gemini-2.5-pro` | `vertex-ai` | 高质量问答和复杂任务 |
+| `gemini-3.0-flash` | `custom` | 快速通用任务 |
+| `gemini-3.0-flash-high` | `custom` | 更高质量的 Flash 任务 |
+| `gemini-3.0-flash-low` | `custom` | 低成本、批量调用 |
+| `gemini-3.0-flash-minimal` | `custom` | 极轻量任务 |
+| `gemini-3.1-pro-high` | `custom` | 高质量 Gemini Pro 任务 |
+| `gemini-3.1-pro-low` | `custom` | 成本更低的 Gemini Pro 任务 |
+
+## DeepSeek 系列
+
+| 模型 | owned_by | 推荐用途 |
+| --- | --- | --- |
+| `deepseek-v4-flash` | `deepseek` | 快速中文问答、轻量代码 |
+| `deepseek-v4-pro` | `deepseek` | 推理、代码、复杂中文任务 |
+
+## 图像与检索模型
+
+| 模型 | owned_by | 推荐用途 |
+| --- | --- | --- |
+| `gpt-image-2` | `custom` | 通用图像生成 |
+| `gpt-image-2-vip` | `custom` | 高质量图像生成 |
+| `codex-gpt-image-2` | `custom` | Codex / 编程相关图片场景 |
+| `Qwen/Qwen3-Embedding-8B` | `custom` | 文本向量、知识库、RAG |
+| `Qwen/Qwen3-Reranker-8B` | `custom` | 检索结果重排序 |
+
+## 查询最新模型列表
+
+```bash
+curl https://api.klong.lat/v1/models \
+  -H "Authorization: Bearer sk-your-api-key"
+```
+
+<Callout type="warn" title="不要展示真实 Key">
+  文档示例中不要展示真实 API Key。对外发布时只保留 `sk-your-api-key` 这种占位写法。
+</Callout>

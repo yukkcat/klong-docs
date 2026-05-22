@@ -1,0 +1,72 @@
+---
+title: OpenAI 兼容格式
+description: 理解 Chat Completions、Responses、Embeddings 和客户端兼容的含义
+---
+
+小恐龙 API 支持 OpenAI 兼容调用格式。意思是：很多支持 OpenAI API 的 SDK 和客户端，只要允许修改 Base URL，就可以改成调用小恐龙 API。
+
+## OpenAI 兼容是什么意思
+
+通常包括三件事：
+
+- 使用类似 OpenAI 的接口路径，例如 `/v1/chat/completions`。
+- 使用类似 OpenAI 的鉴权方式，例如 `Authorization: Bearer sk-...`。
+- 使用类似 OpenAI 的请求体和响应体，例如 `model`、`messages`、`choices`、`usage`。
+
+这让你可以复用很多现成工具和代码。
+
+## 常见调用格式
+
+| 格式 | 接口 | 适合场景 |
+| --- | --- | --- |
+| Chat Completions | `/v1/chat/completions` | 聊天、问答、编程助手、绝大多数客户端 |
+| Responses | `/v1/responses` | 新版 OpenAI 风格工具、部分 Agent/CLI |
+| Embeddings | `/v1/embeddings` | 知识库、向量检索、RAG |
+| Models | `/v1/models` | 查询当前 Key 可用模型 |
+
+## Chat Completions 什么时候用
+
+大多数场景优先用 Chat Completions。
+
+```json
+{
+  "model": "gpt-5.4",
+  "messages": [
+    { "role": "user", "content": "你好" }
+  ]
+}
+```
+
+它适合：
+
+- 聊天机器人
+- 客户端聊天
+- 编程助手
+- 文本总结
+- 翻译和改写
+
+## Responses 什么时候用
+
+Responses 是另一种输入输出格式。某些新工具或 SDK 默认使用 Responses API。
+
+```json
+{
+  "model": "gpt-5.4",
+  "input": "写一个 API 文档简介"
+}
+```
+
+如果你使用的工具明确要求 Responses API，就看 [Responses 接口](/zh/docs/api/ai-model/chat/openai/createresponse)。
+
+## Embeddings 什么时候用
+
+Embeddings 不用于直接聊天，而是把文本转换成向量。
+
+它适合：
+
+- 知识库检索
+- RAG
+- 语义搜索
+- 文本相似度
+
+如果你只是想让模型回答问题，不要选 Embeddings 接口。

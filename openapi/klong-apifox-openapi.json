@@ -1,0 +1,570 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "小恐龙 API",
+    "version": "1.0.0",
+    "description": "小恐龙 API 文档。Base URL 为 https://api.klong.lat/v1，兼容 OpenAI API 调用格式。"
+  },
+  "servers": [
+    {
+      "url": "https://api.klong.lat/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "模型（Models）",
+      "description": "查询可用模型"
+    },
+    {
+      "name": "聊天（Chat）",
+      "description": "Chat Completions 与 Responses"
+    },
+    {
+      "name": "嵌入（Embeddings）",
+      "description": "文本向量接口"
+    }
+  ],
+  "paths": {
+    "/models": {
+      "get": {
+        "summary": "列出模型",
+        "description": "查询当前 API Key 可用的模型列表。",
+        "operationId": "listModels",
+        "tags": [
+          "模型（Models）"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "模型列表",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "object": {
+                      "type": "string",
+                      "example": "list"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Model"
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                },
+                "example": {
+                  "object": "list",
+                  "data": [
+                    {
+                      "id": "gpt-5.4",
+                      "object": "model",
+                      "owned_by": "小恐龙 API"
+                    },
+                    {
+                      "id": "gpt-5.5",
+                      "object": "model",
+                      "owned_by": "小恐龙 API"
+                    },
+                    {
+                      "id": "claude-opus-4-7",
+                      "object": "model",
+                      "owned_by": "小恐龙 API"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/chat/completions": {
+      "post": {
+        "summary": "创建聊天补全",
+        "description": "根据对话消息创建模型回复，兼容 OpenAI Chat Completions。",
+        "operationId": "createChatCompletion",
+        "tags": [
+          "聊天（Chat）"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatCompletionRequest"
+              },
+              "example": {
+                "model": "gpt-5.4",
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": "用一句话介绍小恐龙 API"
+                  }
+                ],
+                "temperature": 0.7,
+                "stream": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "聊天补全结果",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatCompletionResponse"
+                }
+              },
+              "text/event-stream": {
+                "schema": {
+                  "type": "string",
+                  "description": "当 stream=true 时返回 SSE 数据流。"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/responses": {
+      "post": {
+        "summary": "创建 Responses 响应",
+        "description": "使用 OpenAI Responses API 格式创建模型响应。",
+        "operationId": "createResponse",
+        "tags": [
+          "聊天（Chat）"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResponseRequest"
+              },
+              "example": {
+                "model": "gpt-5.5",
+                "input": "写一个简短的 API 接入说明"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "模型响应",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseObject"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/embeddings": {
+      "post": {
+        "summary": "创建向量嵌入",
+        "description": "将输入文本转换为向量，适用于语义检索、RAG 和相似度计算。",
+        "operationId": "createEmbedding",
+        "tags": [
+          "嵌入（Embeddings）"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmbeddingRequest"
+              },
+              "example": {
+                "model": "Qwen/Qwen3-Embedding-8B",
+                "input": "小恐龙 API 文档"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "向量结果",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmbeddingResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "填写你的小恐龙 API Key，例如 sk-your-api-key。"
+      }
+    },
+    "schemas": {
+      "Model": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "模型 ID",
+            "example": "gpt-5.4"
+          },
+          "object": {
+            "type": "string",
+            "example": "model"
+          },
+          "owned_by": {
+            "type": "string",
+            "example": "小恐龙 API"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "code": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "ChatCompletionRequest": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "type": "string",
+            "description": "模型 ID",
+            "example": "gpt-5.4"
+          },
+          "messages": {
+            "type": "array",
+            "description": "对话消息列表",
+            "items": {
+              "$ref": "#/components/schemas/Message"
+            }
+          },
+          "temperature": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 2,
+            "default": 1
+          },
+          "stream": {
+            "type": "boolean",
+            "default": false
+          },
+          "max_tokens": {
+            "type": "integer",
+            "description": "最大输出 token 数"
+          }
+        },
+        "required": [
+          "model",
+          "messages"
+        ]
+      },
+      "Message": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "system",
+              "user",
+              "assistant",
+              "tool"
+            ]
+          },
+          "content": {
+            "description": "消息内容",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            ]
+          }
+        },
+        "required": [
+          "role",
+          "content"
+        ]
+      },
+      "ChatCompletionResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "object": {
+            "type": "string",
+            "example": "chat.completion"
+          },
+          "created": {
+            "type": "integer"
+          },
+          "model": {
+            "type": "string"
+          },
+          "choices": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "index": {
+                  "type": "integer"
+                },
+                "message": {
+                  "$ref": "#/components/schemas/Message"
+                },
+                "finish_reason": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "usage": {
+            "type": "object",
+            "properties": {
+              "prompt_tokens": {
+                "type": "integer"
+              },
+              "completion_tokens": {
+                "type": "integer"
+              },
+              "total_tokens": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      },
+      "ResponseRequest": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "type": "string",
+            "example": "gpt-5.5"
+          },
+          "input": {
+            "description": "输入文本或消息数组",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            ]
+          },
+          "stream": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "required": [
+          "model",
+          "input"
+        ]
+      },
+      "ResponseObject": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "object": {
+            "type": "string",
+            "example": "response"
+          },
+          "created_at": {
+            "type": "integer"
+          },
+          "model": {
+            "type": "string"
+          },
+          "output_text": {
+            "type": "string"
+          },
+          "output": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      },
+      "EmbeddingRequest": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "type": "string",
+            "example": "Qwen/Qwen3-Embedding-8B"
+          },
+          "input": {
+            "description": "输入文本或文本数组",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          }
+        },
+        "required": [
+          "model",
+          "input"
+        ]
+      },
+      "EmbeddingResponse": {
+        "type": "object",
+        "properties": {
+          "object": {
+            "type": "string",
+            "example": "list"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "object": {
+                  "type": "string",
+                  "example": "embedding"
+                },
+                "embedding": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  }
+                },
+                "index": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "model": {
+            "type": "string"
+          },
+          "usage": {
+            "type": "object",
+            "properties": {
+              "prompt_tokens": {
+                "type": "integer"
+              },
+              "total_tokens": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "Unauthorized": {
+        "description": "API Key 无效或未提供",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "BadRequest": {
+        "description": "请求参数错误",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,99 @@
+---
+title: OpenAI 兼容调用
+description: 使用 OpenAI 兼容接口调用聊天、模型、向量、图像和语音能力
+---
+
+小恐龙 API 可以按照 OpenAI 兼容格式调用。绝大多数 SDK 和客户端只需要修改 `base_url` 与 `api_key`。
+
+## 基础地址
+
+OpenAI 兼容 SDK 和大多数 OpenAI Compatible 客户端使用下面这个 Base URL：
+
+```txt
+https://api.klong.lat/v1
+```
+
+如果某个客户端字段写的是“接口地址 / API 地址 / Host / Server URL”，并且它会自动补 `/v1`，则填写根地址 `https://api.klong.lat`。
+
+## 常用端点
+
+| 能力 | 方法与路径 |
+| --- | --- |
+| 模型列表 | `GET /v1/models` |
+| 聊天补全 | `POST /v1/chat/completions` |
+| Responses | `POST /v1/responses` |
+| 向量嵌入 | `POST /v1/embeddings` |
+| 图像生成 | `POST /v1/images/generations` |
+| 语音转文字 | `POST /v1/audio/transcriptions` |
+| 文字转语音 | `POST /v1/audio/speech` |
+
+## 查询模型列表
+
+```bash
+curl https://api.klong.lat/v1/models \
+  -H "Authorization: Bearer sk-your-api-key"
+```
+
+## 聊天补全
+
+```bash
+curl https://api.klong.lat/v1/chat/completions \
+  -H "Authorization: Bearer sk-your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-5.4",
+    "messages": [
+      { "role": "system", "content": "你是一个简洁可靠的助手。" },
+      { "role": "user", "content": "给我三个接入 API 的注意事项" }
+    ],
+    "temperature": 0.7
+  }'
+```
+
+## Responses API
+
+Codex CLI 等新工具可能使用 Responses API。小恐龙 API 已验证支持该接口，可以按下面格式测试：
+
+```bash
+curl https://api.klong.lat/v1/responses \
+  -H "Authorization: Bearer sk-your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-5.5",
+    "input": "写一个简短的 API 接入说明"
+  }'
+```
+
+## 流式输出
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-your-api-key",
+    base_url="https://api.klong.lat/v1",
+)
+
+stream = client.chat.completions.create(
+    model="gpt-5.4",
+    stream=True,
+    messages=[
+        {"role": "user", "content": "写一份简短的 API 接入检查清单"}
+    ],
+)
+
+for chunk in stream:
+    delta = chunk.choices[0].delta.content
+    if delta:
+        print(delta, end="")
+```
+
+## 参数说明
+
+| 参数 | 说明 |
+| --- | --- |
+| `model` | 模型名称，以平台可用模型列表为准 |
+| `messages` | 聊天上下文数组 |
+| `temperature` | 随机性，越高越发散 |
+| `max_tokens` | 最大输出长度 |
+| `stream` | 是否开启流式输出 |

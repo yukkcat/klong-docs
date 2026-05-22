@@ -3,7 +3,12 @@ import { GoogleAnalytics } from '@next/third-parties/google';
 import './global.css';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.newapi.ai'),
+  metadataBase: new URL('https://docs.klong.lat'),
+  title: {
+    default: '小恐龙 API 文档',
+    template: '%s - 小恐龙 API 文档',
+  },
+  description: '小恐龙 API 接入文档、模型列表、客户端教程和接口参考。',
   other: {
     charset: 'utf-8',
   },

@@ -1,0 +1,57 @@
+---
+title: 常见客户端
+description: 理解 Claude Code、OpenAI Codex CLI、CC Switch、Cherry Studio、AionUi 和 OpenClaw 分别适合什么场景
+---
+
+很多用户并不会自己写代码，而是把 API Key 填进现成客户端里使用。
+
+## 客户端是什么
+
+客户端就是帮你调用 API 的软件。它负责提供界面、保存配置、发送请求、展示模型回答。
+
+你通常只需要在客户端里填写：
+
+| 配置项 | 填写值 |
+| --- | --- |
+| API 类型 | OpenAI Compatible / OpenAI 兼容 |
+| Base URL | `https://api.klong.lat/v1` |
+| API Key | 你的 `sk-...` Key |
+| Model | 例如 `gpt-5.4`、`gpt-5.5` 或 `claude-opus-4-7` |
+
+## 常见客户端分类
+
+| 客户端 | 适合谁 | 主要用途 |
+| --- | --- | --- |
+| Claude Code | 开发者 | 终端里的代码理解、修改、自动化 |
+| OpenAI Codex CLI | 开发者 | OpenAI/Codex 风格的命令行编程助手 |
+| CC Switch | 编程 CLI 用户 | 统一管理 Claude Code、Codex CLI 等 Provider |
+| Cherry Studio | 普通用户 | 桌面聊天、翻译、总结、日常使用 |
+| AionUi | 桌面办公用户 / 开发者 | 用 GUI 管理多种 AI 代理和本地工作流 |
+| OpenClaw | 自托管用户 | 搭建自己的 AI 智能助手平台 |
+
+## 先用哪个
+
+如果你主要写代码，建议先看：
+
+- [Claude Code](/zh/docs/apps/claude-code)
+- [OpenAI Codex CLI](/zh/docs/apps/codex-cli)
+- [CC Switch](/zh/docs/apps/cc-switch)
+
+如果你想要桌面客户端，建议先看：
+
+- [Cherry Studio](/zh/docs/apps/cherry-studio)
+- [AionUi](/zh/docs/apps/aionui)
+
+如果你要搭建自己的助手平台，建议看：
+
+- [OpenClaw](/zh/docs/apps/openclaw)
+
+## 客户端接入前先确认
+
+配置任何客户端前，先确认这三项：
+
+- Key 是否有效。
+- 模型名是否存在。
+- 客户端是否支持自定义 Base URL。
+
+不确定模型名时，先调用 `GET /v1/models` 或查看 [模型列表与推荐](/zh/docs/developer/models)。

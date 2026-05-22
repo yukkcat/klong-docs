@@ -1,0 +1,6 @@
+services:
+  klong-docs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: klong-docs:latest

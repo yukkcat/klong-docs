@@ -1,0 +1,15 @@
+{
+  "title": "用户指南",
+  "description": "令牌、用量、定价、充值和聊天应用集成",
+  "icon": "CircleUserRound",
+  "root": true,
+  "pages": [
+    "index",
+    "tokens",
+    "api-usage",
+    "chat-apps",
+    "pricing",
+    "usage-records",
+    "quota-billing"
+  ]
+}

@@ -1,0 +1,59 @@
+---
+title: OpenAI SDK 接入教程
+description: 使用 Python 和 JavaScript SDK 调用 Klong API
+---
+
+如果你的项目已经使用 OpenAI SDK，接入 Klong API 通常只需要修改 Base URL 和 API Key。
+
+## Python
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-your-api-key",
+    base_url="https://api.klong.lat/v1",
+)
+
+response = client.chat.completions.create(
+    model="gpt-5.4",
+    messages=[
+        {"role": "user", "content": "你好，介绍一下 Klong API"}
+    ],
+)
+
+print(response.choices[0].message.content)
+```
+
+## JavaScript / TypeScript
+
+```ts
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  apiKey: "sk-your-api-key",
+  baseURL: "https://api.klong.lat/v1",
+});
+
+const response = await client.chat.completions.create({
+  model: "gpt-5.4",
+  messages: [
+    { role: "user", content: "你好，介绍一下 Klong API" },
+  ],
+});
+
+console.log(response.choices[0].message.content);
+```
+
+## 环境变量写法
+
+```bash
+export OPENAI_API_KEY="sk-your-api-key"
+export OPENAI_BASE_URL="https://api.klong.lat/v1"
+```
+
+## 建议
+
+- 服务端保存 API Key，不要放进浏览器端代码。
+- 先用 `gpt-5.4` 跑通，再按业务场景换模型。
+- 生产环境记录请求 ID、模型、状态码和错误消息，方便排查。

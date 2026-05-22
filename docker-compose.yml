@@ -1,0 +1,16 @@
+services:
+  klong-docs:
+    image: ghcr.io/yukkcat/klong-docs:latest
+    container_name: klong-docs
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      NEXT_TELEMETRY_DISABLED: "1"
+      PORT: "3000"
+      HOSTNAME: "0.0.0.0"
+      # Optional: enable AI chat/search route if you need it.
+      # INKEEP_API_KEY: ${INKEEP_API_KEY}
+      # AI_BASE_URL: ${AI_BASE_URL}
+      # AI_MODEL: ${AI_MODEL}

@@ -8,105 +8,69 @@ import {
 } from 'fumadocs-ui/layouts/home/navbar';
 import { Footer } from '@/components/footer';
 import Link from 'fumadocs-core/link';
-import Image from 'next/image';
-import Preview from '@/../public/assets/dashboard-dark.png';
 import {
-  Rocket,
-  Download,
-  HelpCircle,
-  Sparkles,
-  FileCode,
   BookOpen,
-  Puzzle,
+  CircleUserRound,
+  FileCode,
+  KeyRound,
+  PlaySquare,
+  Rocket,
+  Sparkles,
   type LucideIcon,
 } from 'lucide-react';
 import { getLocalePath } from '@/lib/i18n';
 
-// Navigation items configuration
 const NAV_ITEMS = [
-  { key: 'start', icon: Rocket, path: '' },
-  { key: 'install', icon: Download, path: '/installation' },
-  { key: 'support', icon: HelpCircle, path: '/support' },
-  { key: 'api', icon: BookOpen, path: '/api' },
+  { key: 'concepts', icon: BookOpen, path: '/concepts' },
+  { key: 'start', icon: Rocket, path: '/developer/quickstart' },
+  { key: 'userGuide', icon: CircleUserRound, path: '/user-guide' },
+  { key: 'auth', icon: KeyRound, path: '/developer/authentication' },
+  { key: 'api', icon: FileCode, path: '/api' },
+  { key: 'playground', icon: PlaySquare, path: 'playground' },
   { key: 'apps', icon: Sparkles, path: '/apps' },
 ] as const;
 
-// Internationalization text
 const i18nText: Record<
   string,
   Record<string, { text: string; desc: string }>
 > = {
-  en: {
-    title: { text: 'Documentation', desc: '' },
-    apiDocs: { text: 'Apifox Playground', desc: '' },
-    skills: { text: 'Skills', desc: '' },
-    start: {
-      text: 'Getting Started',
-      desc: 'Learn how to deploy and configure New API.',
-    },
-    install: {
-      text: 'Installation',
-      desc: 'Various deployment methods and installation guides.',
-    },
-    support: { text: 'Help & Support', desc: 'FAQ and community support.' },
-    api: {
-      text: 'API Reference',
-      desc: 'Complete API documentation and reference.',
-    },
-    apps: {
-      text: 'AI Applications',
-      desc: 'Integration guides for AI applications.',
-    },
-  },
   zh: {
     title: { text: '文档', desc: '' },
-    apiDocs: { text: 'Apifox 操练场', desc: '' },
-    skills: { text: 'Skills', desc: '' },
-    start: { text: '快速开始', desc: '学习如何部署和配置 New API。' },
-    install: { text: '部署安装', desc: '多种部署方式和安装指南。' },
-    support: { text: '帮助支持', desc: '常见问题和社区支持。' },
-    api: { text: 'API 参考', desc: '完整的 API 文档和参考指南。' },
-    apps: { text: 'AI 应用', desc: 'AI 应用集成指南。' },
-  },
-  ja: {
-    title: { text: 'ドキュメント', desc: '' },
-    apiDocs: { text: 'Apifox プレイグラウンド', desc: '' },
-    skills: { text: 'Skills', desc: '' },
-    start: { text: 'はじめに', desc: 'New API のデプロイと設定方法を学ぶ。' },
-    install: {
-      text: 'インストール',
-      desc: '様々なデプロイ方法とインストールガイド。',
+    apiReference: { text: 'AI 模型接口', desc: '' },
+    concepts: {
+      text: '基础概念',
+      desc: '先理解 URL、Key、模型、Token 和客户端。',
     },
-    support: {
-      text: 'ヘルプ＆サポート',
-      desc: 'よくある質問とコミュニティサポート。',
+    start: { text: '快速开始', desc: '5 分钟跑通第一次模型调用。' },
+    userGuide: {
+      text: '用户指南',
+      desc: '令牌、定价、用量记录和配额充值。',
     },
-    api: {
-      text: 'API リファレンス',
-      desc: '完全な API ドキュメントとリファレンス。',
+    auth: { text: '地址与鉴权', desc: 'Base URL、Bearer Token 和环境变量。' },
+    api: { text: 'AI 模型接口', desc: 'Chat、Responses、Models 等模型接口。' },
+    playground: {
+      text: 'API 操练场',
+      desc: '在线发送请求，查看真实返回结果。',
     },
     apps: {
-      text: 'AI アプリケーション',
-      desc: 'AI アプリケーション統合ガイド。',
+      text: '客户端教程',
+      desc: 'Claude Code、Codex CLI、AionUi、Cherry Studio 等接入教程。',
     },
   },
 };
 
-// Get localized text
-const getTexts = (lang: string) => i18nText[lang] || i18nText.en;
+const getTexts = (lang: string) => i18nText[lang] || i18nText.zh;
 
-// Build navigation items
 const buildNavItems = (lang: string, docsUrl: string) => {
   const texts = getTexts(lang);
   return NAV_ITEMS.map(({ key, icon: Icon, path }) => ({
     text: texts[key].text,
     desc: texts[key].desc,
-    url: `${docsUrl}${path}`,
+    url: path.startsWith('/') ? `${docsUrl}${path}` : getLocalePath(lang, path),
     Icon,
   }));
 };
 
-// Menu link item component
 function MenuLinkItem({
   item,
   className,
@@ -135,13 +99,13 @@ export default async function Layout({
   const texts = getTexts(lang);
   const docsUrl = getLocalePath(lang, 'docs');
   const navItems = buildNavItems(lang, docsUrl);
+  const apiReferenceUrl = getLocalePath(lang, 'docs/api');
 
   return (
     <div className="flex min-h-screen flex-col">
       <HomeLayout
         {...baseOptions(lang)}
         links={[
-          // Mobile menu
           {
             type: 'menu',
             on: 'menu',
@@ -155,19 +119,17 @@ export default async function Layout({
           {
             type: 'main',
             on: 'menu',
-            text: texts.skills.text,
-            url: `${docsUrl}/skills`,
-            icon: <Puzzle />,
+            text: texts.apiReference.text,
+            url: apiReferenceUrl,
+            icon: <FileCode />,
           },
           {
             type: 'main',
             on: 'menu',
-            text: texts.apiDocs.text,
-            url: 'https://apifox.newapi.ai/',
-            icon: <FileCode />,
-            external: true,
+            text: texts.playground.text,
+            url: getLocalePath(lang, 'playground'),
+            icon: <PlaySquare />,
           },
-          // Desktop navigation
           {
             type: 'custom',
             on: 'nav',
@@ -177,30 +139,27 @@ export default async function Layout({
                   <Link href={docsUrl}>{texts.title.text}</Link>
                 </NavbarMenuTrigger>
                 <NavbarMenuContent className="text-[15px]">
-                  {/* First item with preview image */}
-                  <NavbarMenuLink href={docsUrl} className="md:row-span-2">
-                    <div className="-mx-3 -mt-3">
-                      <Image
-                        src={Preview}
-                        alt="Preview"
-                        className="rounded-t-lg object-cover"
-                        loading="lazy"
-                        fetchPriority="low"
-                        style={{
-                          maskImage:
-                            'linear-gradient(to bottom,white 60%,transparent)',
-                        }}
+                  <NavbarMenuLink
+                    href={getLocalePath(lang, 'docs/developer/quickstart')}
+                    className="overflow-hidden p-0 md:row-span-2"
+                  >
+                    <div className="relative h-52 overflow-hidden border-b bg-gradient-to-br from-sky-50 via-cyan-50 to-fuchsia-50 dark:from-slate-950 dark:via-slate-900 dark:to-cyan-950">
+                      <img
+                        src="/assets/header.webp"
+                        alt="小恐龙 API 首页预览"
+                        className="h-full w-full object-cover object-top"
                       />
+                      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-fd-card to-transparent" />
                     </div>
-                    <p className="font-medium">{navItems[0].text}</p>
-                    <p className="text-fd-muted-foreground text-sm">
-                      {navItems[0].desc}
-                    </p>
+                    <div className="p-4">
+                      <p className="font-medium">{navItems[1].text}</p>
+                      <p className="text-fd-muted-foreground text-sm">
+                        {navItems[1].desc}
+                      </p>
+                    </div>
                   </NavbarMenuLink>
-                  {/* Second column */}
-                  <MenuLinkItem item={navItems[1]} className="lg:col-start-2" />
+                  <MenuLinkItem item={navItems[0]} className="lg:col-start-2" />
                   <MenuLinkItem item={navItems[2]} className="lg:col-start-2" />
-                  {/* Third column */}
                   <MenuLinkItem
                     item={navItems[3]}
                     className="lg:col-start-3 lg:row-start-1"
@@ -209,31 +168,29 @@ export default async function Layout({
                     item={navItems[4]}
                     className="lg:col-start-3 lg:row-start-2"
                   />
+                  <MenuLinkItem
+                    item={navItems[5]}
+                    className="lg:col-start-4 lg:row-start-1"
+                  />
+                  <MenuLinkItem
+                    item={navItems[6]}
+                    className="lg:col-start-4 lg:row-start-2"
+                  />
                 </NavbarMenuContent>
               </NavbarMenu>
             ),
           },
           {
-            type: 'custom',
+            type: 'main',
             on: 'nav',
-            children: (
-              <Link
-                href={`${docsUrl}/skills`}
-                className="inline-flex items-center gap-1.5 text-sm text-fd-muted-foreground transition-colors hover:text-fd-foreground"
-              >
-                {texts.skills.text}
-                <span className="rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
-                  New
-                </span>
-              </Link>
-            ),
+            text: texts.apiReference.text,
+            url: apiReferenceUrl,
           },
           {
             type: 'main',
             on: 'nav',
-            text: texts.apiDocs.text,
-            url: 'https://apifox.newapi.ai/',
-            external: true,
+            text: texts.playground.text,
+            url: getLocalePath(lang, 'playground'),
           },
           ...linkItems,
         ]}

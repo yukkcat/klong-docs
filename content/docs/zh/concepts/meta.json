@@ -1,0 +1,14 @@
+{
+  "title": "基础概念",
+  "description": "API Key、Base URL、模型、Token、输入输出和调用格式",
+  "icon": "BookOpen",
+  "root": true,
+  "pages": [
+    "index",
+    "api-key-and-url",
+    "models-and-tokens",
+    "request-and-response",
+    "clients",
+    "openai-compatible"
+  ]
+}

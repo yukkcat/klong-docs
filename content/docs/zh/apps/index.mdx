@@ -1,113 +1,91 @@
 ---
-title: AI 应用
-description: 支持的 AI 应用和集成方案
+title: 客户端教程
+description: Claude Code、OpenAI Codex CLI、CC Switch、Cherry Studio、AionUi 和 OpenClaw 接入教程
 ---
 
 import { Card, Cards } from 'fumadocs-ui/components/card';
 import {
-  Cherry,
-  Sparkles,
-  Terminal,
-  BookOpen,
-  MessageCircle,
-  Languages,
   Bot,
-  Settings,
+  Cherry,
+  GitCompareArrows,
+  PanelsTopLeft,
+  SquareTerminal,
+  Terminal,
 } from 'lucide-react';
 
-## 概述
+这里放真正需要对外展示的客户端教程。用户进来以后，不应该先看到一长串工具名，而是先按自己的使用场景找到入口：终端编程、统一管理、桌面使用，或自托管助手平台。
 
-New API 兼容多种流行的 AI 应用和工具。以下是已验证支持的应用列表及配置指南。
+如果还不知道 Base URL、API Key、模型、token 分别是什么意思，先看 [基础概念](/zh/docs/concepts)。
 
-## 支持的应用
+## 推荐顺序
+
+| 场景 | 推荐入口 | 说明 |
+| --- | --- | --- |
+| 终端编程，主要使用 Claude Code | [Claude Code](/zh/docs/apps/claude-code) | 最常见的代码助手接入场景 |
+| 终端编程，主要使用 OpenAI Codex CLI | [OpenAI Codex CLI](/zh/docs/apps/codex-cli) | 走 OpenAI Responses API |
+| 同时管理多个 AI CLI | [CC Switch](/zh/docs/apps/cc-switch) | 统一管理 Claude Code、Codex CLI 等配置 |
+| 桌面聊天、写作、翻译 | [Cherry Studio](/zh/docs/apps/cherry-studio) | 最适合普通用户快速上手 |
+| 桌面办公、多个 Agent、本地 GUI | [AionUi](/zh/docs/apps/aionui) | 免费开源的桌面办公 Agent |
+| 自托管 AI 助手平台 | [OpenClaw](/zh/docs/apps/openclaw) | 适合部署自己的 AI Agent 平台 |
+
+## 客户端列表
 
 <Cards>
   <Card
-    icon={<Sparkles />}
-    title="AionUi"
-    description="免费开源的Cowork，支持多模型、文件管理和实时预览。"
-    href="/zh/docs/apps/aionui"
+    icon={<Terminal />}
+    title="Claude Code"
+    description="Anthropic 官方终端编程助手，适合代码理解、修改和自动化任务。"
+    href="/zh/docs/apps/claude-code"
   />
   <Card
-    icon={<Settings />}
+    icon={<SquareTerminal />}
+    title="OpenAI Codex CLI"
+    description="OpenAI 官方本地编程 CLI，建议使用 Responses API 接入。"
+    href="/zh/docs/apps/codex-cli"
+  />
+  <Card
+    icon={<GitCompareArrows />}
     title="CC Switch"
-    description="支持一键填入，点击 New API 后弹窗配置 Claude/Codex/Gemini 及主模型与各型号。"
+    description="AI CLI 统一管理工具，适合在多个模型、Key 和 Provider 间切换。"
     href="/zh/docs/apps/cc-switch"
   />
   <Card
     icon={<Cherry />}
     title="Cherry Studio"
-    description="功能强大的 AI 助手客户端，支持多模型对话。"
+    description="桌面 AI 客户端，适合聊天、写作、翻译和日常模型使用。"
     href="/zh/docs/apps/cherry-studio"
   />
   <Card
-    icon={<Bot />}
-    title="DeepChat"
-    description="开源全功能AI Agent客户端。"
-    href="/zh/docs/apps/deepchat"
-  />
-  <Card
-    icon={<Bot />}
-    title="Memoh"
-    description="容器化 AI 智能体平台，每个机器人独立容器运行，支持长期记忆与多渠道接入。"
-    href="/zh/docs/apps/memoh"
+    icon={<PanelsTopLeft />}
+    title="AionUi"
+    description="免费开源的桌面办公 Agent，适合用 GUI 管理多种 AI 代理。"
+    href="/zh/docs/apps/aionui"
   />
   <Card
     icon={<Bot />}
     title="OpenClaw"
-    description="自托管 AI 助手平台 — 安装 OpenClaw，对接 New API，支持飞书、Discord、Slack 等多渠道 AI 代理管理。"
+    description="自托管 AI 智能助手平台，适合搭建自己的 Agent 工作流。"
     href="/zh/docs/apps/openclaw"
-  />
-  <Card
-    icon={<BookOpen />}
-    title="Fluent Read"
-    description="AI 驱动的智能阅读和翻译助手。"
-    href="/zh/docs/apps/fluent-read"
-  />
-  <Card
-    icon={<MessageCircle />}
-    title="LangBot"
-    description="基于大语言模型的聊天机器人框架。"
-    href="/zh/docs/apps/langbot"
-  />
-  <Card
-    icon={<Languages />}
-    title="Luna Translator"
-    description="游戏和文档的实时翻译工具。"
-    href="/zh/docs/apps/luna-translator"
-  />
-  <Card
-    icon={<Bot />}
-    title="AstrBot"
-    description="开源的一站式 Agent 聊天机器人平台。"
-    href="/zh/docs/apps/astrbot"
-  />
-  <Card
-    icon={<Terminal />}
-    title="Claude Code"
-    description="Anthropic Claude 驱动的代码编辑器集成。"
-    href="/zh/docs/apps/claude-code"
-  />
-  <Card
-    icon={<Terminal />}
-    title="Codex CLI"
-    description="命令行界面的 AI 代码助手工具。"
-    href="/zh/docs/apps/codex-cli"
-  />
-  <Card
-    icon={<Bot />}
-    title="Factory Droid CLI"
-    description="自动化工作流的 AI 代理工具。"
-    href="/zh/docs/apps/factory-droid-cli"
   />
 </Cards>
 
-## 集成指南
+## 通用配置
 
-大多数应用只需要配置以下信息即可连接 New API：
+| 配置项 | 填写值 |
+| --- | --- |
+| 默认接口地址 | `https://api.klong.lat` |
+| OpenAI Base URL | `https://api.klong.lat/v1` |
+| API Key | `sk-your-api-key` |
+| 推荐聊天模型 | `gpt-5.4`；高质量用 `gpt-5.5` 或 `claude-opus-4-7` |
+| 推荐编程模型 | Codex CLI 用 `gpt-5.5`，Claude Code 用 `claude-opus-4-7` |
 
-1. **API 地址**：您的 New API 服务地址
-2. **API Key**：在 New API 控制台生成的令牌
-3. **模型名称**：选择需要使用的模型
+字段写着“API 地址 / Host / Server URL”时，一般先填 `https://api.klong.lat`。字段写着“OpenAI Base URL / API Base / base_url / baseURL”时，填 `https://api.klong.lat/v1`。
 
-具体配置步骤请参考各应用的详细文档。
+## 每篇教程要回答什么
+
+| 问题 | 说明 |
+| --- | --- |
+| 适合谁用 | 普通用户、开发者、命令行用户还是自托管用户 |
+| 填哪里 | Base URL、API Key、模型名分别在哪个设置项 |
+| 怎么验证 | 发一条测试消息，或调用模型列表 |
+| 常见错误 | Key 无效、模型不存在、Base URL 填错、接口格式不兼容 |

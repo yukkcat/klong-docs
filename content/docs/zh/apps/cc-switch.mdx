@@ -1,109 +1,135 @@
 ---
-title: CC Switch - AI CLI 统一管理工具
-description: CC Switch 教程 — 跨平台 AI CLI 管理工具，统一管理 Claude Code、Codex、Gemini CLI 的 Provider 配置、MCP 服务器与系统提示词。对接 New API 一键填入。
+title: CC Switch 接入教程
+description: 用 CC Switch 统一管理 Claude Code、Codex CLI 等编程助手配置
 ---
 
-<Callout type="info" title="聊天设置选项">
-  在 New API 控制台的系统设置->聊天设置中，可添加如下快捷选项，便于在令牌管理页一键填充到 CC Switch：
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+
+CC Switch 是用来统一管理 AI 编程 CLI 的工具。你可以把 Claude Code、Codex CLI、Gemini CLI 等工具的 Provider、模型、API Key 放在一个地方管理，日常切换模型或切换接口时，不用反复改环境变量和配置文件。
+
+<Callout type="info" title="什么时候优先用 CC Switch">
+  如果你同时用 Claude Code 和 Codex CLI，或者经常在多个 API 地址、多个模型之间切换，优先推荐 CC Switch。只用单个工具、单个模型时，再看后面的 Claude Code 或 Codex CLI 手动配置教程。
 </Callout>
 
-    ```json
-    { "CC Switch": "ccswitch" }
-    ```
+## 适合谁用
 
-<Callout type="info">
-  🔀 CC Switch 是一款开源、跨平台的 AI CLI 统一管理工具，支持 Claude Code、Codex 和 Gemini CLI
-  的 Provider 配置一键切换、MCP 服务器统一管理、系统提示词（Prompts）管理以及 Skills 扩展管理，
-  让你在多个 AI 编程助手之间自由切换，无需手动编辑配置文件。
-</Callout>
+| 用户 | 建议 |
+| --- | --- |
+| 只用 Cherry Studio 聊天 | 不需要 CC Switch，看 [Cherry Studio](/zh/docs/apps/cherry-studio) |
+| 只用 Claude Code | 可以直接手动配置，也可以用 CC Switch 管理 |
+| 同时用 Claude Code 和 Codex CLI | 优先用 CC Switch |
+| 给团队成员发教程 | 优先写 CC Switch，减少每个人手动改配置出错 |
 
-- GitHub 仓库：[https://github.com/farion1231/cc-switch](https://github.com/farion1231/cc-switch)
-- 下载地址：[GitHub Releases](https://github.com/farion1231/cc-switch/releases)
+## 需要准备
 
-## 核心特性
+| 配置项 | 填写值 |
+| --- | --- |
+| OpenAI 兼容 Base URL | `https://api.klong.lat/v1` |
+| Claude 兼容 Base URL | `https://api.klong.lat` |
+| API Key | `sk-your-api-key` |
+| 聊天模型 | `gpt-5.4`；高质量可用 `gpt-5.5` 或 `claude-opus-4-7` |
+| Codex 编程模型 | `gpt-5.5` |
+| Claude Code 模型 | `claude-opus-4-7` |
 
-### 🔌 Provider 管理
-- **一键切换** — 在 Claude Code、Codex、Gemini 的 API 配置之间一键切换，无需手动修改环境变量或配置文件
-- **多端点支持** — 每个 Provider 可配置多个端点，支持 API Key 管理与延迟测速
-- **4 层模型配置** — 支持 Haiku / Sonnet / Opus / Custom 四级模型粒度配置
+## 它和手动配置有什么区别
 
-### 🛠️ MCP 服务器管理
-- **跨应用统一管理** — 单面板管理 Claude / Codex / Gemini 三端的 MCP 服务器
-- **三种传输类型** — 支持 stdio、HTTP、SSE（Server-Sent Events）
-- **自动同步** — 统一导入导出 + 双向同步
+| 方式 | 适合场景 | 缺点 |
+| --- | --- | --- |
+| CC Switch | 多工具、多模型、多 Key、多端点切换 | 需要额外安装一个管理工具 |
+| 手动配置 Claude Code | 只用 Claude Code，配置固定 | 环境变量容易填错，换模型麻烦 |
+| 手动配置 Codex CLI | 只用 Codex CLI，配置固定 | 需要自己维护 `config.toml` |
 
-### 💬 Prompts 管理
-- **多预设系统提示词** — 无限预设、快速切换
-- **跨应用支持** — Claude（`CLAUDE.md`）、Codex（`AGENTS.md`）、Gemini（`GEMINI.md`）
-- **Markdown 编辑器** — CodeMirror 6 + 实时预览
+## 安装 CC Switch
 
-### 🌐 多平台支持
-- **桌面应用** — Windows、macOS、Linux 原生安装包
-- **Web 版本** — 适用于无头服务器 / SSH 远程环境的浏览器访问方案
-- **CLI 版本** — 命令行交互模式与命令模式双支持
+### macOS
 
-## NewAPI 接入方法
-
-CC Switch 支持 `ccswitch://` Deep Link 协议，可从 New API 令牌管理页一键导入 Provider 配置。
-
-### 配置步骤
-
-1. **在 New API 令牌管理页，点击对应令牌的下拉菜单**
-   在菜单中选择 **CC Switch** 选项，系统会自动唤起 CC Switch 应用并弹出配置弹窗。
-
-2. **在弹窗中完成配置**
-   ![填入 CC Switch 弹窗](/assets/cc_switch/fill_dialog.png)
-
-   弹窗各字段说明：
-   - **应用**：顶部切换应用类型 — **Claude** / **Codex** / **Gemini**，根据需要选择目标应用
-   - **名称**：为该配置填写一个名称（例如 `My Claude`），方便后续在 CC Switch 中识别和切换
-   - **主模型**（必填）— 默认使用的主力模型
-   - **Haiku 模型** — 轻量快速模型
-   - **Sonnet 模型** — 均衡模型
-   - **Opus 模型** — 最强模型
-
-   所有模型均为下拉选择，未选择时显示「请选择模型」。
-
-3. **完成配置**
-   点击 **「打开 CC Switch」** 即可将配置导入 CC Switch 并开始使用；点击 **「取消」** 放弃本次操作。
-
-## 安装方式
-
-### macOS（推荐 Homebrew）
-
-```shell
+```bash
 brew tap farion1231/ccswitch
 brew install --cask cc-switch
 ```
 
 ### Windows
 
-从 [Releases](https://github.com/farion1231/cc-switch/releases) 下载 `.msi` 安装包或便携版 `.zip`。
+到 GitHub Releases 下载 `.msi` 安装包或便携版 `.zip`：
+
+```txt
+https://github.com/farion1231/cc-switch/releases
+```
 
 ### Linux
 
-从 [Releases](https://github.com/farion1231/cc-switch/releases) 下载 `.deb` 包或 `.AppImage`。
+到 GitHub Releases 下载 `.deb` 或 `.AppImage`。
 
-ArchLinux 用户：
+Arch Linux 用户可以使用：
 
-```shell
+```bash
 paru -S cc-switch-bin
 ```
 
-### Web 版本（无头 / SSH 服务器）
+## 配置小恐龙 API Provider
 
-```shell
-wget https://github.com/farion1231/cc-switch/releases/latest/download/cc-switch-web-linux-x64.tar.gz
-tar -xzf cc-switch-web-linux-x64.tar.gz
-cd cc-switch-web/
-./cc-switch-web
-```
+打开 CC Switch 后，新建一个 Provider，按你的目标工具选择配置方式。
 
-默认端口 `17666`，通过浏览器访问 `http://localhost:17666`。
+### Claude Code
 
-## 相关链接
+Claude Code 使用 Anthropic 兼容接口。Base URL 不要带 `/v1`。
 
-- [GitHub 仓库](https://github.com/farion1231/cc-switch)
-- [更新日志](https://github.com/farion1231/cc-switch/blob/main/CHANGELOG.md)
-- [Web 版本仓库](https://github.com/cp-yu/cc-switch-web)
-- [CLI 版本仓库](https://github.com/thomas-jack/cc-switch-cli)
+| 字段 | 填写 |
+| --- | --- |
+| 应用 | Claude |
+| 名称 | `小恐龙 Claude` |
+| Base URL | `https://api.klong.lat` |
+| API Key | 你的 `sk-...` |
+| 主模型 | `claude-opus-4-7` |
+
+### Codex CLI
+
+Codex CLI 使用 OpenAI Responses API。Base URL 要带 `/v1`。
+
+| 字段 | 填写 |
+| --- | --- |
+| 应用 | Codex |
+| 名称 | `小恐龙 Codex` |
+| Base URL | `https://api.klong.lat/v1` |
+| API Key | 你的 `sk-...` |
+| 主模型 | `gpt-5.5` |
+| Wire API | `responses` |
+
+![CC Switch 配置弹窗](/assets/cc_switch/fill_dialog.png)
+
+## 推荐使用流程
+
+<Steps>
+  <Step title="先装目标 CLI">
+    如果你要管理 Claude Code，先确保 `claude --version` 能正常返回；如果你要管理 Codex CLI，先确保 `codex --version` 能正常返回。
+  </Step>
+  <Step title="在 CC Switch 新建 Provider">
+    按上面的表格填 Base URL、API Key 和模型名。Claude 和 Codex 的 Base URL 不一样，别混用。
+  </Step>
+  <Step title="切换到小恐龙 API 配置">
+    在 CC Switch 中启用刚创建的 Provider，让它写入对应工具所需的配置。
+  </Step>
+  <Step title="打开终端验证">
+    分别运行 `claude` 或 `codex`，发送一个简单任务，再到小恐龙 API 的使用记录里确认请求。
+  </Step>
+</Steps>
+
+## 和小恐龙 API 文档里的其他教程怎么配合
+
+| 你要做什么 | 看哪篇 |
+| --- | --- |
+| 给普通用户配置桌面聊天 | [Cherry Studio](/zh/docs/apps/cherry-studio) |
+| 同时管理 Claude Code 和 Codex CLI | 本页 |
+| 只想手动配置 Claude Code | [Claude Code](/zh/docs/apps/claude-code) |
+| 只想手动配置 Codex CLI | [Codex CLI](/zh/docs/apps/codex-cli) |
+| 在代码里调用 API | [OpenAI 兼容调用](/zh/docs/developer/openai-compatible) |
+
+## 常见问题
+
+| 问题 | 处理方式 |
+| --- | --- |
+| Claude Code 404 | Claude Base URL 通常填 `https://api.klong.lat`，不要加 `/v1` |
+| Codex CLI 404 | Codex Base URL 通常填 `https://api.klong.lat/v1`，并使用 Responses API |
+| 切换后没生效 | 关闭旧终端，重新打开终端再运行 CLI |
+| 模型不可用 | 换成小恐龙 API 模型列表里真实存在的模型名 |
+| 请求没出现在使用记录 | 确认当前 CLI 使用的是 CC Switch 切换后的 Provider |

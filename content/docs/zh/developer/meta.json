@@ -1,0 +1,14 @@
+{
+  "title": "开始接入",
+  "description": "小恐龙 API 的快速开始、鉴权、模型和调用示例",
+  "icon": "Rocket",
+  "root": true,
+  "pages": [
+    "index",
+    "quickstart",
+    "authentication",
+    "openai-compatible",
+    "models",
+    "pricing"
+  ]
+}

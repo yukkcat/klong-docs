@@ -1,0 +1,126 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "小恐龙 API",
+    "version": "1.0.0",
+    "description": "小恐龙 API OpenAI 兼容接口"
+  },
+  "servers": [
+    {
+      "url": "https://api.klong.lat/v1"
+    }
+  ],
+  "paths": {
+    "/models": {
+      "get": {
+        "summary": "列出模型",
+        "description": "查询当前 API Key 可用的模型列表。",
+        "operationId": "listModels",
+        "tags": ["模型（Models）/OpenAI 兼容格式"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "模型列表",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "object": {
+                      "type": "string",
+                      "example": "list"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Model"
+                      }
+                    }
+                  },
+                  "required": ["data"]
+                },
+                "example": {
+                  "object": "list",
+                  "data": [
+                    {
+                      "id": "gpt-5.4",
+                      "object": "model",
+                      "owned_by": "小恐龙 API"
+                    },
+                    {
+                      "id": "gpt-5.5",
+                      "object": "model",
+                      "owned_by": "小恐龙 API"
+                    },
+                    {
+                      "id": "claude-opus-4-7",
+                      "object": "model",
+                      "owned_by": "小恐龙 API"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "responses": {
+      "Unauthorized": {
+        "description": "API Key 无效或未提供",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Model": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "模型 ID",
+            "example": "gpt-5.4"
+          },
+          "object": {
+            "type": "string",
+            "example": "model"
+          },
+          "owned_by": {
+            "type": "string",
+            "example": "小恐龙 API"
+          }
+        },
+        "required": ["id"]
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": { "type": "string" },
+              "type": { "type": "string" },
+              "code": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

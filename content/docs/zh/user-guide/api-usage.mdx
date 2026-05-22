@@ -1,0 +1,119 @@
+---
+title: 使用 API
+description: 找到 API 地址和令牌，用操练场、curl 或 OpenAI SDK 验证调用
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Tabs, Tab } from 'fumadocs-ui/components/tabs';
+
+使用小恐龙 API 时，最关键的是两个值：`API 地址` 和 `API Key`。大多数支持 OpenAI 兼容接口的客户端，都只需要把地址、Key 和模型名填进去。
+
+<Callout type="info" title="默认地址">
+  默认接口地址：`https://api.klong.lat`。OpenAI Base URL：`https://api.klong.lat/v1`。如果你有专属域名或代理地址，以控制台显示为准。
+</Callout>
+
+## 先用操练场测试
+
+操练场适合快速确认三件事：Key 是否正确、模型是否可用、返回是否正常。
+
+![操练场页面](/assets/guide/feature-guide/playground.png)
+
+1. 打开 [API 操练场](/zh/playground) 或控制台里的操练场。
+2. 填入你的 API Key，必要时确认 Base URL 是 `https://api.klong.lat/v1`。
+3. 选择一个模型，例如 `gpt-5.4`。
+4. 发送一句简单问题，确认能收到回复。
+
+![操练场对话示例](/assets/guide/feature-guide/playground-chat.png)
+
+## 获取 API 地址
+
+有些页面会直接展示 API 地址，也可以在文档或控制台复制。
+
+![首页 API 地址复制区域](/assets/guide/feature-guide/api-address.png)
+
+常见填写方式：
+
+| 项目 | 填写内容 |
+| --- | --- |
+| 接口地址 / API 地址 / Host | `https://api.klong.lat` |
+| OpenAI Base URL / API Base / SDK `base_url` | `https://api.klong.lat/v1` |
+| API Key / 密钥 | 你在令牌管理里创建的 `sk-...` |
+| Model / 模型 | 控制台可用模型列表中的模型名 |
+
+## 代码调用示例
+
+<Tabs items={['curl', 'Python', 'Node.js']}>
+  <Tab value="curl">
+
+```bash
+curl https://api.klong.lat/v1/chat/completions \
+  -H "Authorization: Bearer sk-your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-5.4",
+    "messages": [
+      { "role": "user", "content": "你好，介绍一下小恐龙 API" }
+    ]
+  }'
+```
+
+  </Tab>
+  <Tab value="Python">
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-your-api-key",
+    base_url="https://api.klong.lat/v1",
+)
+
+response = client.chat.completions.create(
+    model="gpt-5.4",
+    messages=[
+        {"role": "user", "content": "你好，介绍一下小恐龙 API"}
+    ],
+)
+
+print(response.choices[0].message.content)
+```
+
+  </Tab>
+  <Tab value="Node.js">
+
+```js
+import OpenAI from 'openai';
+
+const client = new OpenAI({
+  apiKey: 'sk-your-api-key',
+  baseURL: 'https://api.klong.lat/v1',
+});
+
+const response = await client.chat.completions.create({
+  model: 'gpt-5.4',
+  messages: [{ role: 'user', content: '你好，介绍一下小恐龙 API' }],
+});
+
+console.log(response.choices[0].message.content);
+```
+
+  </Tab>
+</Tabs>
+
+## 常用接口
+
+| 接口 | 路径 | 用途 |
+| --- | --- | --- |
+| 模型列表 | `GET /v1/models` | 查看当前 Key 可调用的模型 |
+| 聊天补全 | `POST /v1/chat/completions` | 常见对话、问答、文本生成 |
+| Responses | `POST /v1/responses` | 新版 OpenAI Responses 调用格式 |
+| 向量嵌入 | `POST /v1/embeddings` | 文本向量化、知识库检索 |
+
+## 常见错误
+
+| 现象 | 可能原因 |
+| --- | --- |
+| 401 Unauthorized | API Key 填错、Key 被删除或没有带 `Bearer` |
+| model not found | 模型名称写错，或该 Key 没有权限 |
+| insufficient quota | 账号余额不足，或令牌配额上限已用完 |
+| 请求很慢 | 模型本身较慢，或网络连接到 API 地址不稳定 |

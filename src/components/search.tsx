@@ -38,14 +38,7 @@ function Header() {
       <div className="bg-fd-card text-fd-card-foreground flex-1 rounded-xl border p-3">
         <p className="mb-2 text-sm font-medium">Ask AI</p>
         <p className="text-fd-muted-foreground text-xs">
-          Powered by{' '}
-          <a
-            href="https://www.newapi.ai"
-            target="_blank"
-            rel="noreferrer noopener"
-          >
-            New API
-          </a>
+          Powered by 小恐龙 API docs
         </p>
       </div>
       <button
@@ -247,7 +240,7 @@ function Input(props: ComponentProps<'textarea'>) {
 
 const roleName: Record<string, string> = {
   user: 'you',
-  assistant: 'New API Docs',
+  assistant: '小恐龙 API Docs',
 };
 
 function Message({

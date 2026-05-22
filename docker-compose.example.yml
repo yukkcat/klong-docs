@@ -1,0 +1,30 @@
+# Example production deployment for Klong API Docs.
+#
+# Usage:
+#   cp docker-compose.example.yml docker-compose.yml
+#   docker compose pull
+#   docker compose up -d
+#
+# Reverse proxy target:
+#   http://127.0.0.1:3000
+
+services:
+  klong-docs:
+    image: ghcr.io/yukkcat/klong-docs:latest
+    container_name: klong-docs
+    restart: unless-stopped
+    ports:
+      # Recommended when using Nginx/Caddy on the same server.
+      - "127.0.0.1:3000:3000"
+      # If you want to expose it directly, use this instead:
+      # - "3000:3000"
+    environment:
+      NODE_ENV: production
+      NEXT_TELEMETRY_DISABLED: "1"
+      PORT: "3000"
+      HOSTNAME: "0.0.0.0"
+
+      # Optional: enable AI chat/search route.
+      # INKEEP_API_KEY: "your-api-key"
+      # AI_BASE_URL: "https://api.inkeep.com/v1"
+      # AI_MODEL: "inkeep-qa-sonnet-4"

@@ -1,0 +1,103 @@
+---
+title: 输入与输出
+description: 理解请求体、消息数组、响应 JSON 和流式输出
+---
+
+API 调用可以理解成：你把一段结构化输入发给小恐龙 API，模型处理后返回结构化输出。
+
+## 请求是什么
+
+一次请求通常包含：
+
+| 部分 | 示例 | 作用 |
+| --- | --- | --- |
+| Method | `POST` | 请求方法 |
+| URL | `/v1/chat/completions` | 调用哪个接口 |
+| Headers | `Authorization: Bearer sk-...` | 鉴权和内容类型 |
+| Body | JSON | 模型、输入内容、参数 |
+
+## Chat Completions 的输入
+
+Chat Completions 使用 `messages` 数组表达对话：
+
+```json
+{
+  "model": "gpt-5.4",
+  "messages": [
+    { "role": "system", "content": "你是一个简洁的助手。" },
+    { "role": "user", "content": "解释一下 API Key 是什么。" }
+  ]
+}
+```
+
+常见角色：
+
+| role | 含义 |
+| --- | --- |
+| system | 系统要求，定义助手行为 |
+| user | 用户输入 |
+| assistant | 模型历史回答 |
+| tool | 工具调用结果 |
+
+## Responses 的输入
+
+Responses 更偏新格式，常见写法是：
+
+```json
+{
+  "model": "gpt-5.4",
+  "input": "写一个简短的 API 接入说明"
+}
+```
+
+如果某些工具默认使用 Responses API，就优先看 [Responses 接口](/zh/docs/api/ai-model/chat/openai/createresponse)。
+
+## 输出是什么
+
+普通 JSON 返回通常包含：
+
+- `id`：本次请求 ID
+- `model`：使用的模型
+- `choices` 或 `output`：模型输出内容
+- `usage`：token 使用统计
+
+示例：
+
+```json
+{
+  "id": "chatcmpl_example",
+  "object": "chat.completion",
+  "model": "gpt-5.4",
+  "choices": [
+    {
+      "message": {
+        "role": "assistant",
+        "content": "API Key 是调用 API 时使用的身份凭证。"
+      }
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 20,
+    "completion_tokens": 18,
+    "total_tokens": 38
+  }
+}
+```
+
+## 流式输出是什么
+
+流式输出就是模型边生成边返回，用户不需要等完整回答生成完才看到结果。
+
+在请求中开启：
+
+```json
+{
+  "model": "gpt-5.4",
+  "stream": true,
+  "messages": [
+    { "role": "user", "content": "写一段 100 字介绍" }
+  ]
+}
+```
+
+聊天应用、命令行助手、长文本生成通常建议开启流式输出。

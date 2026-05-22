@@ -1,83 +1,75 @@
 import Link from 'next/link';
-import { Github, BookOpen } from 'lucide-react';
+import {
+  ArrowRight,
+  BadgeCheck,
+  BookOpen,
+  CircleUserRound,
+  Code2,
+  KeyRound,
+  PlaySquare,
+  Rocket,
+  Sparkles,
+  Terminal,
+} from 'lucide-react';
 import { Hero } from './page.client';
 import { getLocalePath, i18n } from '@/lib/i18n';
-import Image from 'next/image';
-import { AntifraudDialog } from '@/components/antifraud-dialog';
 
-const AtomGitIcon = () => (
-  <svg role="img" viewBox="0 0 24 24" fill="currentColor" className="size-4">
-    <path
-      fillRule="evenodd"
-      d="M15.5,5c.1,0,.3-.2.5-.3,0,.1,0,.2,0,.3,0,.1,0,.3,0,.4,0,1,.6,1.8,1.4,2,1.1.3,2.1-.2,2.7-1.1.7-1.1.4-2.4-.8-3.3C16.2.8,12.8.2,9.1,1.2,1.1,3.6-1.6,13.4,4,19.4c2.4,2.6,5.5,3.7,9,3.6,4.5-.1,7.7-2.3,9.7-6.2,1.5-2.7-.1-5.7-3.2-6.4-1.7-.3-3.5-.5-5.3-.3-.6,0-1.2.2-1.7.5-.6.3-.7.9-.7,1.5,0,.6.5.9,1,1,1,.2,2.1.3,3.1.3.3,0,.6,0,.9,0,.4,0,.9,0,1.3,0,1.2.2,1.6,1.2,1,2.3-.2.3-.3.5-.5.7-.8.9-1.9,1.5-3.1,1.8-2.2.5-4.3.6-6.5-.1-2.5-.8-3.9-2.6-4-5,0-1.5.4-3,1.1-4.3.3-.6.5-1.2.5-1.9,0-.3,0-.6,0-.9,0-.2,0-.3,0-.5.2,0,.5.1.7.2.9.4,1.9.5,2.9.3.6-.1,1.2-.2,1.8-.1,1,0,1.9-.2,2.7-.7.2-.1.4-.2.6-.4Z"
-    />
-  </svg>
-);
-
-const contentMap: Record<
-  string,
+const highlights = [
   {
-    badge: string;
-    title: string;
-    subtitle: string;
-    highlight: string;
-    getStarted: string;
-    github: string;
-    atomgit: string;
-    partnersTitle: string;
-    partnersSubtitle: string;
-    sponsorPartnersTitle: string;
-    sponsorPartnersSubtitle: string;
-    devContributorsTitle: string;
-    docsContributorsTitle: string;
-  }
-> = {
-  en: {
-    badge: 'The Foundation of Your AI Universe',
-    title: 'Connect all AI providers, manage your AI assets,',
-    subtitle: 'build the',
-    highlight: 'future',
-    getStarted: 'Getting Started',
-    github: 'GitHub',
-    atomgit: 'AtomGit',
-    partnersTitle: 'Our Partners & Clients',
-    partnersSubtitle: 'In no particular order',
-    sponsorPartnersTitle: 'Sponsor Partners',
-    sponsorPartnersSubtitle: 'Trusted sponsor collaborations',
-    devContributorsTitle: 'Development Contributors',
-    docsContributorsTitle: 'Documentation Contributors',
+    icon: <BookOpen className="size-4" />,
+    title: '先讲清楚概念',
+    text: 'URL、Key、模型、Token、输入输出和客户端先解释明白。',
   },
-  zh: {
-    badge: '人工智能应用基座',
-    title: '承载 AI 应用，管理数字资产，',
-    subtitle: '连接',
-    highlight: '未来',
-    getStarted: '快速开始',
-    github: 'GitHub',
-    atomgit: 'AtomGit',
-    partnersTitle: '我们的合作伙伴与客户',
-    partnersSubtitle: '排名不分先后',
-    sponsorPartnersTitle: '赞助合作伙伴',
-    sponsorPartnersSubtitle: '值得信赖的赞助合作',
-    devContributorsTitle: '开发贡献者',
-    docsContributorsTitle: '文档贡献者',
+  {
+    icon: <Terminal className="size-4" />,
+    title: '客户端教程',
+    text: 'Claude Code、OpenAI Codex CLI、CC Switch、Cherry Studio 都有独立配置说明。',
   },
-  ja: {
-    badge: 'あなたの AI ユニバースの基盤',
-    title: 'すべての AI プロバイダーを接続し、AI アセットを管理し、',
-    subtitle: '',
-    highlight: '未来を構築',
-    getStarted: 'はじめに',
-    github: 'GitHub',
-    atomgit: 'AtomGit',
-    partnersTitle: '私たちのパートナーとお客様',
-    partnersSubtitle: '順不同',
-    sponsorPartnersTitle: 'スポンサーパートナー',
-    sponsorPartnersSubtitle: '信頼できるスポンサー協力',
-    devContributorsTitle: '開発貢献者',
-    docsContributorsTitle: 'ドキュメント貢献者',
+  {
+    icon: <CircleUserRound className="size-4" />,
+    title: '用户指南',
+    text: '令牌、定价、充值、用量记录和聊天应用接入都能查到。',
   },
-} as const;
+];
+
+const quickLinks = [
+  {
+    icon: <BookOpen className="size-5" />,
+    title: '基础概念',
+    text: 'API Key、Base URL、模型、Token、输入输出和常见客户端。',
+    href: '/zh/docs/concepts',
+  },
+  {
+    icon: <KeyRound className="size-5" />,
+    title: 'API 地址与鉴权',
+    text: 'Base URL、Bearer Token、环境变量和密钥安全。',
+    href: '/zh/docs/developer/authentication',
+  },
+  {
+    icon: <Code2 className="size-5" />,
+    title: 'OpenAI 兼容调用',
+    text: 'Chat Completions、Responses、模型列表等常用接口。',
+    href: '/zh/docs/developer/openai-compatible',
+  },
+  {
+    icon: <CircleUserRound className="size-5" />,
+    title: '用户指南',
+    text: '令牌管理、使用 API、聊天应用集成、定价、使用记录和配额充值。',
+    href: '/zh/docs/user-guide',
+  },
+  {
+    icon: <BadgeCheck className="size-5" />,
+    title: '模型列表与推荐',
+    text: '聊天用 gpt-5.4、gpt-5.5 或 claude-opus-4-7；代码优先用 gpt-5.5 或 claude-opus-4-7。',
+    href: '/zh/docs/developer/models',
+  },
+  {
+    icon: <PlaySquare className="size-5" />,
+    title: 'API 操练场',
+    text: '在线发送请求，检查 Key、模型和真实接口返回。',
+    href: '/zh/playground',
+  },
+];
 
 export default async function Page({
   params,
@@ -85,207 +77,103 @@ export default async function Page({
   params: Promise<{ lang: string }>;
 }) {
   const { lang } = await params;
-  const content = contentMap[lang] || contentMap.en;
-
-  const partners = [
-    {
-      name: 'Cherry Studio',
-      url: 'https://www.cherry-ai.com/',
-      logo: '/assets/partner/cherry-studio.png',
-    },
-    {
-      name: 'AionUi',
-      url: 'https://github.com/iOfficeAI/AionUi',
-      logo: '/assets/partner/aionui.png',
-    },
-    {
-      name: 'Peking University',
-      url: 'https://bda.pku.edu.cn/',
-      logo: '/assets/partner/pku.png',
-    },
-    {
-      name: 'UCloud',
-      url: 'https://www.compshare.cn/?ytag=GPU_yy_gh_newapi',
-      logo: '/assets/partner/ucloud.png',
-    },
-    {
-      name: 'Alibaba Cloud',
-      url: 'https://www.aliyun.com/',
-      logo: '/assets/partner/aliyun.png',
-    },
-    {
-      name: 'IO.NET',
-      url: 'https://io.net/',
-      logo: '/assets/partner/io-net.png',
-    },
-  ];
-
-  const sponsorPartners = [
-    {
-      name: 'RixAPI',
-      url: 'https://rixapi.com/',
-      lightLogo: '/assets/partner/rixapi-black.png',
-      darkLogo: '/assets/partner/rixapi-white.png',
-    },
-  ];
 
   return (
-    <main className="text-landing-foreground dark:text-landing-foreground-dark pt-4 pb-6 md:pb-12">
-      <div className="relative mx-auto flex h-[70vh] max-h-[900px] min-h-[600px] w-full max-w-[1400px] overflow-hidden rounded-2xl border bg-origin-border">
-        <Hero />
-        <div className="z-2 flex size-full flex-col px-4 max-md:items-center max-md:text-center md:p-12">
-          <p className="border-brand/50 text-brand mt-12 w-fit rounded-full border p-2 text-xs font-medium">
-            {content.badge}
-          </p>
-          <h1 className="leading-tighter my-8 text-4xl font-medium xl:mb-12 xl:text-5xl">
-            {content.title}
-            <br />
-            {content.subtitle}{' '}
-            <span className="text-brand">{content.highlight}</span>.
-          </h1>
-          <div className="flex w-fit flex-row flex-wrap items-center justify-center gap-4">
-            <Link
-              href={getLocalePath(lang, 'docs')}
-              className="bg-brand text-brand-foreground hover:bg-brand-200 inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 font-medium tracking-tight transition-colors max-sm:text-sm"
-            >
-              <BookOpen className="size-4" />
-              {content.getStarted}
-            </Link>
-            <a
-              href="https://github.com/QuantumNous/new-api"
-              target="_blank"
-              rel="noreferrer noopener"
-              className="bg-fd-secondary text-fd-secondary-foreground hover:bg-fd-accent inline-flex items-center justify-center gap-2 rounded-full border px-5 py-3 font-medium tracking-tight transition-colors max-sm:text-sm"
-            >
-              <Github className="size-4" />
-              {content.github}
-            </a>
-            <a
-              href="https://atomgit.com/QuantumNous/new-api"
-              target="_blank"
-              rel="noreferrer noopener"
-              className="bg-fd-secondary text-fd-secondary-foreground hover:bg-fd-accent inline-flex items-center justify-center gap-2 rounded-full border px-5 py-3 font-medium tracking-tight transition-colors max-sm:text-sm"
-            >
-              <AtomGitIcon />
-              {content.atomgit}
-            </a>
+    <main className="text-landing-foreground dark:text-landing-foreground-dark pb-10">
+      <section className="mx-auto w-full max-w-[1400px] px-4 pt-4">
+        <div className="relative flex min-h-[620px] overflow-hidden rounded-2xl border bg-origin-border md:min-h-[680px]">
+          <Hero />
+          <div className="z-2 flex w-full flex-col px-5 py-10 md:p-12 lg:w-[68%]">
+            <p className="border-brand/50 text-brand w-fit rounded-full border bg-white/50 px-3 py-2 text-xs font-medium backdrop-blur dark:bg-black/20">
+              小恐龙 API 接入中心
+            </p>
+            <h1 className="leading-tighter mt-8 max-w-3xl text-4xl font-semibold tracking-normal md:text-5xl xl:text-6xl">
+              把小恐龙 API
+              <br />
+              接进你的客户端和代码。
+            </h1>
+            <p className="text-fd-muted-foreground mt-6 max-w-2xl text-base leading-7 md:text-lg">
+              面向客户和开发者的 API 文档站：从获取
+              Key、选择模型、配置客户端，到接口调试，都按实际接入路径整理好。
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <Link
+                href={getLocalePath(lang, 'docs/concepts')}
+                className="bg-brand text-brand-foreground hover:bg-brand-200 inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 font-medium tracking-normal transition-colors"
+              >
+                <BookOpen className="size-4" />
+                先看基础概念
+              </Link>
+              <Link
+                href={getLocalePath(lang, 'docs/developer/quickstart')}
+                className="bg-fd-background/80 text-fd-foreground hover:bg-fd-accent inline-flex items-center justify-center gap-2 rounded-full border px-5 py-3 font-medium tracking-normal transition-colors"
+              >
+                <Rocket className="size-4" />
+                快速开始
+              </Link>
+              <Link
+                href={getLocalePath(lang, 'docs/user-guide')}
+                className="bg-fd-background/80 text-fd-foreground hover:bg-fd-accent inline-flex items-center justify-center gap-2 rounded-full border px-5 py-3 font-medium tracking-normal transition-colors"
+              >
+                <CircleUserRound className="size-4" />
+                用户指南
+              </Link>
+              <Link
+                href={getLocalePath(lang, 'docs/apps')}
+                className="bg-fd-secondary text-fd-secondary-foreground hover:bg-fd-accent inline-flex items-center justify-center gap-2 rounded-full border px-5 py-3 font-medium tracking-normal transition-colors"
+              >
+                <Terminal className="size-4" />
+                客户端教程
+              </Link>
+              <Link
+                href={getLocalePath(lang, 'playground')}
+                className="bg-fd-background/80 text-fd-foreground hover:bg-fd-accent inline-flex items-center justify-center gap-2 rounded-full border px-5 py-3 font-medium tracking-normal transition-colors"
+              >
+                <PlaySquare className="size-4" />
+                API 操练场
+              </Link>
+            </div>
+            <div className="mt-auto grid gap-3 pt-12 md:grid-cols-3">
+              {highlights.map((item) => (
+                <div
+                  key={item.title}
+                  className="border-fd-border/70 bg-fd-background/70 rounded-lg border p-4 backdrop-blur"
+                >
+                  <div className="text-brand mb-3">{item.icon}</div>
+                  <h2 className="text-fd-foreground text-sm font-semibold">
+                    {item.title}
+                  </h2>
+                  <p className="text-fd-muted-foreground mt-2 text-sm leading-6">
+                    {item.text}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
-
-      {/* Partners Section */}
-      <section className="mx-auto mt-12 max-w-[1400px] px-4 text-center">
-        <h2 className="text-2xl font-semibold md:text-3xl">
-          {content.partnersTitle}
-        </h2>
-        <p className="text-muted-foreground mt-2 text-sm">
-          {content.partnersSubtitle}
-        </p>
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-6 md:gap-10">
-          {partners.map((partner) => (
-            <a
-              key={partner.name}
-              href={partner.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="opacity-70 grayscale-[50%] transition-all duration-300 hover:opacity-100 hover:grayscale-0"
-            >
-              <Image
-                src={partner.logo}
-                alt={partner.name}
-                width={72}
-                height={60}
-                className="h-[50px] w-auto md:h-[60px]"
-                loading="lazy"
-                decoding="async"
-              />
-            </a>
-          ))}
-        </div>
       </section>
 
-      {/* Sponsor Partners Section */}
-      <section className="mx-auto mt-16 max-w-[1400px] px-4 text-center">
-        <h2 className="text-2xl font-semibold md:text-3xl">
-          {content.sponsorPartnersTitle}
-        </h2>
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-6 md:gap-10">
-          {sponsorPartners.map((partner) => (
-            <a
-              key={partner.name}
-              href={partner.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="opacity-70 grayscale-[50%] transition-all duration-300 hover:opacity-100 hover:grayscale-0"
-            >
-              <Image
-                src={partner.lightLogo}
-                alt={partner.name}
-                width={120}
-                height={60}
-                className="block h-[50px] w-auto md:h-[60px] dark:hidden"
-                loading="lazy"
-                decoding="async"
-              />
-              <Image
-                src={partner.darkLogo}
-                alt={partner.name}
-                width={120}
-                height={60}
-                className="hidden h-[50px] w-auto md:h-[60px] dark:block"
-                loading="lazy"
-                decoding="async"
-              />
-            </a>
-          ))}
-        </div>
-      </section>
-
-      {/* Development Contributors Section */}
-      <section className="mx-auto mt-16 max-w-[1400px] px-4 text-center">
-        <h2 className="text-2xl font-semibold md:text-3xl">
-          {content.devContributorsTitle}
-        </h2>
-        <div className="mt-8 flex justify-center">
-          <a
-            href="https://github.com/QuantumNous/new-api/graphs/contributors"
-            target="_blank"
-            rel="noopener noreferrer"
+      <section className="mx-auto mt-10 grid max-w-[1400px] gap-4 px-4 md:grid-cols-2 xl:grid-cols-4">
+        {quickLinks.map((item) => (
+          <Link
+            key={item.title}
+            href={item.href}
+            className="border-fd-border bg-fd-card hover:border-brand/60 group rounded-lg border p-5 transition-colors"
           >
-            <img
-              src="https://contrib.rocks/image?repo=QuantumNous/new-api"
-              alt="Development Contributors"
-              loading="lazy"
-              decoding="async"
-              className="max-w-full"
-            />
-          </a>
-        </div>
+            <div className="text-brand">{item.icon}</div>
+            <h2 className="text-fd-foreground mt-4 text-base font-semibold">
+              {item.title}
+            </h2>
+            <p className="text-fd-muted-foreground mt-2 text-sm leading-6">
+              {item.text}
+            </p>
+            <span className="text-brand mt-4 inline-flex items-center gap-1 text-sm font-medium">
+              查看文档
+              <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+            </span>
+          </Link>
+        ))}
       </section>
-
-      {/* Documentation Contributors Section */}
-      <section className="mx-auto mt-16 max-w-[1400px] px-4 text-center">
-        <h2 className="text-2xl font-semibold md:text-3xl">
-          {content.docsContributorsTitle}
-        </h2>
-        <div className="mt-8 flex justify-center">
-          <a
-            href="https://github.com/QuantumNous/new-api-docs-v1/graphs/contributors"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <img
-              src="https://contrib.rocks/image?repo=QuantumNous/new-api-docs-v1"
-              alt="Documentation Contributors"
-              loading="lazy"
-              decoding="async"
-              className="max-w-full"
-            />
-          </a>
-        </div>
-      </section>
-
-      <AntifraudDialog lang={lang} />
     </main>
   );
 }

@@ -1,0 +1,98 @@
+---
+title: 用户指南
+description: 面向普通用户的后台使用、令牌、用量、定价和充值说明
+---
+
+import {
+  BadgeDollarSign,
+  ChartNoAxesCombined,
+  KeyRound,
+  MessageSquare,
+  PlaySquare,
+  WalletCards,
+} from 'lucide-react';
+
+用户指南主要写给已经拿到小恐龙 API 账号的人。这里不先讲代码细节，而是说明你在控制台里应该怎么创建令牌、查看价格、检查用量、充值配额，以及怎么把 API 接入聊天应用。
+
+## 适合谁看
+
+| 你想做什么 | 应该看哪里 |
+| --- | --- |
+| 创建或管理 API Key | [令牌管理](/zh/docs/user-guide/tokens) |
+| 知道 API 地址怎么用，先测试一次请求 | [使用 API](/zh/docs/user-guide/api-usage) |
+| 把账号接入聊天应用 | [聊天应用集成](/zh/docs/user-guide/chat-apps) |
+| 查看不同模型怎么收费 | [定价](/zh/docs/user-guide/pricing) |
+| 查每次调用消耗了多少 | [使用记录](/zh/docs/user-guide/usage-records) |
+| 充值、兑换码、余额不够 | [配额与充值](/zh/docs/user-guide/quota-billing) |
+
+## 常用入口
+
+<div className="not-prose grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+  <a href="/zh/docs/user-guide/tokens" className="group rounded-xl border bg-fd-card p-4 text-fd-card-foreground transition-colors hover:bg-fd-accent/70">
+    <div className="mb-5 grid size-8 place-items-center rounded-lg bg-fd-primary text-fd-primary-foreground">
+      <KeyRound className="size-4" />
+    </div>
+    <h3 className="text-base font-semibold">令牌管理</h3>
+    <p className="mt-2 text-sm leading-6 text-fd-muted-foreground">
+      创建 API Key，限制模型、有效期、配额和 IP 白名单。
+    </p>
+  </a>
+
+  <a href="/zh/docs/user-guide/api-usage" className="group rounded-xl border bg-fd-card p-4 text-fd-card-foreground transition-colors hover:bg-fd-accent/70">
+    <div className="mb-5 grid size-8 place-items-center rounded-lg bg-fd-primary text-fd-primary-foreground">
+      <PlaySquare className="size-4" />
+    </div>
+    <h3 className="text-base font-semibold">使用 API</h3>
+    <p className="mt-2 text-sm leading-6 text-fd-muted-foreground">
+      找到 Base URL，进入操练场验证 Key，并复制到客户端。
+    </p>
+  </a>
+
+  <a href="/zh/docs/user-guide/chat-apps" className="group rounded-xl border bg-fd-card p-4 text-fd-card-foreground transition-colors hover:bg-fd-accent/70">
+    <div className="mb-5 grid size-8 place-items-center rounded-lg bg-fd-primary text-fd-primary-foreground">
+      <MessageSquare className="size-4" />
+    </div>
+    <h3 className="text-base font-semibold">聊天应用集成</h3>
+    <p className="mt-2 text-sm leading-6 text-fd-muted-foreground">
+      把小恐龙 API 填进支持 OpenAI 兼容接口的聊天客户端。
+    </p>
+  </a>
+
+  <a href="/zh/docs/user-guide/pricing" className="group rounded-xl border bg-fd-card p-4 text-fd-card-foreground transition-colors hover:bg-fd-accent/70">
+    <div className="mb-5 grid size-8 place-items-center rounded-lg bg-fd-primary text-fd-primary-foreground">
+      <BadgeDollarSign className="size-4" />
+    </div>
+    <h3 className="text-base font-semibold">定价</h3>
+    <p className="mt-2 text-sm leading-6 text-fd-muted-foreground">
+      查看模型输入、输出价格，理解不同模型的消耗差异。
+    </p>
+  </a>
+
+  <a href="/zh/docs/user-guide/usage-records" className="group rounded-xl border bg-fd-card p-4 text-fd-card-foreground transition-colors hover:bg-fd-accent/70">
+    <div className="mb-5 grid size-8 place-items-center rounded-lg bg-fd-primary text-fd-primary-foreground">
+      <ChartNoAxesCombined className="size-4" />
+    </div>
+    <h3 className="text-base font-semibold">使用记录</h3>
+    <p className="mt-2 text-sm leading-6 text-fd-muted-foreground">
+      查看调用时间、模型、token、配额扣减和失败原因。
+    </p>
+  </a>
+
+  <a href="/zh/docs/user-guide/quota-billing" className="group rounded-xl border bg-fd-card p-4 text-fd-card-foreground transition-colors hover:bg-fd-accent/70">
+    <div className="mb-5 grid size-8 place-items-center rounded-lg bg-fd-primary text-fd-primary-foreground">
+      <WalletCards className="size-4" />
+    </div>
+    <h3 className="text-base font-semibold">配额与充值</h3>
+    <p className="mt-2 text-sm leading-6 text-fd-muted-foreground">
+      了解余额、兑换码、在线充值和配额不足时的处理方式。
+    </p>
+  </a>
+</div>
+
+## 推荐顺序
+
+1. 先看 [令牌管理](/zh/docs/user-guide/tokens)，创建一个专门用于测试的 Key。
+2. 再看 [使用 API](/zh/docs/user-guide/api-usage)，用操练场或 curl 验证这个 Key 能正常调用。
+3. 如果是给非开发用户使用，继续看 [聊天应用集成](/zh/docs/user-guide/chat-apps)。
+4. 开始正式使用前，看一下 [定价](/zh/docs/user-guide/pricing) 和 [配额与充值](/zh/docs/user-guide/quota-billing)。
+5. 用了一段时间后，通过 [使用记录](/zh/docs/user-guide/usage-records) 排查费用、失败请求和模型消耗。

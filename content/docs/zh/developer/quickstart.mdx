@@ -1,0 +1,162 @@
+---
+title: 开始接入
+description: 拿到地址和 API Key 后，按顺序跑通模型列表和第一次聊天请求
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+import { Tabs, Tab } from 'fumadocs-ui/components/tabs';
+
+这页只做一件事：让你从零跑通一次真实调用。不要一上来就改一堆客户端配置，先用最基础的请求确认三件事：地址对不对、Key 能不能用、模型名有没有填对。
+
+跑通以后，再去配置 Claude Code、OpenAI Codex CLI、CC Switch 或 Cherry Studio。代码任务建议优先放在 Claude Code 或 Codex CLI 里跑，聊天和写作再放到桌面客户端。
+
+## 接入前先拿到这三样
+
+| 名称 | 填什么 |
+| --- | --- |
+| 默认接口地址 | `https://api.klong.lat` |
+| OpenAI Base URL | `https://api.klong.lat/v1` |
+| API Key | 账号或令牌页面里创建的 `sk-...` |
+
+如果你还没有 API Key，先去控制台的令牌页面创建一个测试令牌。第一次测试建议单独建一个 Key，名称写清楚，比如“文档测试”或“Claude Code 测试”，后面排查用量会更方便。
+
+怎么判断要不要加 `/v1`：
+
+| 软件字段 | 一般填什么 |
+| --- | --- |
+| 接口地址 / Host / Server URL / Claude Base URL | `https://api.klong.lat` |
+| OpenAI Base URL / API Base / base_url / baseURL | `https://api.klong.lat/v1` |
+
+模型建议：
+
+| 场景 | 建议模型 |
+| --- | --- |
+| 日常聊天 | 默认用 `gpt-5.4`，需要更强质量时用 `gpt-5.5` 或 `claude-opus-4-7` |
+| 代码任务 | 建议在 Claude Code 或 OpenAI Codex CLI 下使用 `claude-opus-4-7` 或 `gpt-5.5` |
+
+<Callout type="warn" title="不要把真实 Key 发给别人">
+  教程、截图、GitHub 仓库里统一写 `sk-your-api-key`。真实 Key 只放在自己的客户端、环境变量或可信配置里。
+</Callout>
+
+## 接入步骤
+
+<Steps>
+  <Step title="创建测试令牌">
+    进入控制台的令牌页面，创建一个专门用于测试的 API Key。先不要用生产 Key，也不要把真实 Key 放进截图或公开仓库。
+  </Step>
+  <Step title="确认地址填法">
+    OpenAI 兼容接口一般要带 `/v1`，所以 SDK、Cherry Studio、Codex CLI 等通常填 `https://api.klong.lat/v1`。Claude Code 这类 Anthropic 兼容入口通常填根地址 `https://api.klong.lat`。
+  </Step>
+  <Step title="先查模型列表">
+    用 `GET /v1/models` 确认 Key 可用，也确认自己能看到哪些模型。模型名必须一字不差。
+  </Step>
+  <Step title="再跑聊天请求">
+    用 `POST /v1/chat/completions` 发一句简单问题，确认能收到模型回复。
+  </Step>
+  <Step title="再配置客户端">
+    写代码看本页示例；做编程助手优先看 [Claude Code](/zh/docs/apps/claude-code) 或 [OpenAI Codex CLI](/zh/docs/apps/codex-cli)；需要统一切换 CLI 配置看 [CC Switch](/zh/docs/apps/cc-switch)；日常聊天看 [Cherry Studio](/zh/docs/apps/cherry-studio)。
+  </Step>
+</Steps>
+
+## 第一步：查询模型
+
+先不要急着跑聊天，先确认 Key 能拿到模型列表：
+
+```bash
+curl https://api.klong.lat/v1/models \
+  -H "Authorization: Bearer sk-your-api-key"
+```
+
+成功标准：
+
+| 返回情况 | 说明 |
+| --- | --- |
+| 能看到 `data` 数组 | 地址和 Key 基本可用 |
+| 能看到 `gpt-5.4` | 日常聊天模型可用 |
+| 能看到 `gpt-5.5` 或 `claude-opus-4-7` | 高质量聊天或代码任务模型可用 |
+| 返回 `401` | Key 错了、Key 被禁用，或请求头没有写 `Bearer` |
+| 返回 `404` | Base URL 或路径写错，先检查是否用了 `https://api.klong.lat/v1/models` |
+
+## 第二步：发送聊天请求
+
+<Tabs items={['curl', 'Python', 'Node.js']}>
+  <Tab value="curl">
+
+```bash
+curl https://api.klong.lat/v1/chat/completions \
+  -H "Authorization: Bearer sk-your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-5.4",
+    "messages": [
+      { "role": "user", "content": "用一句话介绍小恐龙 API" }
+    ]
+  }'
+```
+
+  </Tab>
+  <Tab value="Python">
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-your-api-key",
+    base_url="https://api.klong.lat/v1",
+)
+
+response = client.chat.completions.create(
+    model="gpt-5.4",
+    messages=[
+        {"role": "user", "content": "用一句话介绍小恐龙 API"}
+    ],
+)
+
+print(response.choices[0].message.content)
+```
+
+  </Tab>
+  <Tab value="Node.js">
+
+```js
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  apiKey: "sk-your-api-key",
+  baseURL: "https://api.klong.lat/v1",
+});
+
+const response = await client.chat.completions.create({
+  model: "gpt-5.4",
+  messages: [
+    { role: "user", content: "用一句话介绍小恐龙 API" },
+  ],
+});
+
+console.log(response.choices[0].message.content);
+```
+
+  </Tab>
+</Tabs>
+
+如果能收到一段正常回复，就说明 OpenAI 兼容聊天接口已经跑通。到这一步再去配置客户端，排查会简单很多。
+
+## 第三步：按用途继续
+
+| 你要做什么 | 建议去看 |
+| --- | --- |
+| 终端里让 AI 读代码、改文件、跑命令 | [Claude Code 接入教程](/zh/docs/apps/claude-code) |
+| 使用 OpenAI Codex CLI 做代码任务 | [OpenAI Codex CLI 接入教程](/zh/docs/apps/codex-cli) |
+| 同时管理 Claude Code 和 Codex CLI | [CC Switch 接入教程](/zh/docs/apps/cc-switch) |
+| 桌面聊天、写作、翻译、日常使用 | [Cherry Studio 接入教程](/zh/docs/apps/cherry-studio) |
+| 查所有模型接口参数和响应结构 | [AI 模型接口](/zh/docs/api) |
+
+## 常见检查点
+
+| 现象 | 优先检查 |
+| --- | --- |
+| `401 Unauthorized` | API Key 是否复制完整，前面是否带了 `Bearer` |
+| `model not found` | 模型名是否和模型列表完全一致 |
+| `404` | Base URL 是否多加或少加 `/v1` |
+| 没有请求记录 | 客户端是否还在使用别的服务商配置 |
+| 输出太慢 | 换模型测试，或用流式输出改善等待体验 |
