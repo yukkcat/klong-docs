@@ -571,7 +571,7 @@ export function PlaygroundClient() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f6f7fb] text-[#20242c]">
+    <main className="apifox-playground min-h-screen bg-[#f6f7fb] text-[#20242c]">
       <header className="sticky top-0 z-30 border-b border-[#e7e9f0] bg-white">
         <div className="flex h-14 items-center justify-between px-5">
           <div className="flex items-center gap-8">
@@ -610,7 +610,7 @@ export function PlaygroundClient() {
       </header>
 
       <div className="grid min-h-[calc(100vh-56px)] grid-cols-1 lg:grid-cols-[292px_minmax(0,1fr)] xl:grid-cols-[292px_minmax(560px,1fr)_400px]">
-        <aside className="border-r border-[#e4e7ef] bg-white lg:sticky lg:top-14 lg:h-[calc(100vh-56px)] lg:overflow-y-auto">
+        <aside className="apifox-scrollbar border-r border-[#e4e7ef] bg-white lg:sticky lg:top-14 lg:h-[calc(100vh-56px)] lg:overflow-y-auto">
           <div className="border-b border-[#eef0f5] p-4">
             <div className="flex h-9 items-center gap-2 rounded-md border border-[#dfe2eb] bg-[#f9fafc] px-3 text-sm text-[#8a91a3]">
               <Search className="size-4" />
@@ -742,7 +742,7 @@ export function PlaygroundClient() {
                 <BookOpenText className="size-4 text-[#0891b2]" />
                 <h2 className="text-sm font-semibold">请求参数</h2>
               </div>
-              <div className="overflow-x-auto">
+              <div className="apifox-scrollbar overflow-x-auto">
                 <table className="w-full min-w-[620px] text-left text-sm">
                   <thead className="bg-[#fafbfe] text-xs text-[#7a8294]">
                     <tr>
@@ -999,7 +999,7 @@ export function PlaygroundClient() {
                       </button>
                     </div>
                   </div>
-                  <pre className="max-h-[360px] min-h-64 overflow-auto rounded-md border border-[#e1e5ee] bg-white p-3 text-xs leading-5 text-[#303643]">
+                  <pre className="apifox-scrollbar apifox-code-block max-h-[360px] min-h-64 overflow-auto rounded-md border border-[#d9e8ef] p-3 text-xs leading-5 text-[#303643]">
                     <code>{requestPreviewContent}</code>
                   </pre>
                 </div>
@@ -1011,14 +1011,14 @@ export function PlaygroundClient() {
                 <Braces className="size-4 text-[#0891b2]" />
                 <h2 className="text-sm font-semibold">返回示例</h2>
               </div>
-              <pre className="max-h-[360px] overflow-auto p-4 text-xs leading-6 text-[#303643]">
+              <pre className="apifox-scrollbar apifox-code-block max-h-[360px] overflow-auto p-4 text-xs leading-6 text-[#303643]">
                 <code>{stringify(responseExample)}</code>
               </pre>
             </section>
           </div>
         </section>
 
-        <aside className="border-l border-[#e4e7ef] bg-[#fbfcff] xl:sticky xl:top-14 xl:h-[calc(100vh-56px)] xl:overflow-y-auto">
+        <aside className="apifox-scrollbar border-l border-[#e4e7ef] bg-[#fbfcff] xl:sticky xl:top-14 xl:h-[calc(100vh-56px)] xl:overflow-y-auto">
           <div className="border-b border-[#e7e9f0] bg-white p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -1057,7 +1057,7 @@ export function PlaygroundClient() {
                   <div className="mb-2 text-xs font-medium text-[#697184]">
                     可用模型
                   </div>
-                  <div className="flex max-h-48 flex-wrap gap-1.5 overflow-auto">
+                  <div className="apifox-scrollbar flex max-h-48 flex-wrap gap-1.5 overflow-auto">
                     {responseModelIds.map((id) => (
                       <span
                         key={id}
@@ -1102,7 +1102,7 @@ export function PlaygroundClient() {
                       {copied === 'raw' ? '已复制' : '复制'}
                     </button>
                   </summary>
-                  <pre className="max-h-80 overflow-auto border-t border-[#edf0f5] p-3 text-xs leading-5 text-[#303643]">
+                  <pre className="apifox-scrollbar apifox-code-block max-h-80 overflow-auto border-t border-[#edf0f5] p-3 text-xs leading-5 text-[#303643]">
                     <code>{stringify(result.data)}</code>
                   </pre>
                 </details>
