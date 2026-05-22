@@ -20,7 +20,7 @@ import {
   TerminalSquare,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { cn } from '@/lib/cn';
 
 type RunnableEndpoint = 'models' | 'chat' | 'responses' | 'embeddings';
@@ -147,9 +147,36 @@ const runnableIds = new Set<RunnableEndpoint>([
 const defaultEndpoint = endpointGroups[2].items[0];
 
 const modelPlaceholder = '<model-id>';
+const defaultPrompt = '用三句话介绍小恐龙 API 的接入方式。';
 
 function stringify(value: unknown) {
   return JSON.stringify(value, null, 2);
+}
+
+function parseJsonBody(text: string):
+  | {
+      ok: true;
+      value: unknown;
+    }
+  | {
+      ok: false;
+      message: string;
+    } {
+  try {
+    return {
+      ok: true,
+      value: JSON.parse(text),
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      message: error instanceof Error ? error.message : 'JSON 格式不正确',
+    };
+  }
+}
+
+function quoteCurlBody(value: string) {
+  return `'${value.replace(/'/g, `'"'"'`)}'`;
 }
 
 function asRecord(value: unknown): JsonRecord | null {
@@ -376,12 +403,7 @@ function buildResponseExample(endpoint: string, model: string) {
   };
 }
 
-function buildCurl(
-  endpoint: EndpointItem,
-  apiKey: string,
-  model: string,
-  prompt: string
-) {
+function buildCurl(endpoint: EndpointItem, apiKey: string, bodyText: string) {
   const auth = apiKey.trim() || 'sk-your-api-key';
 
   if (!endpoint.runnable) {
@@ -396,7 +418,12 @@ function buildCurl(
   return `curl https://api.klong.lat${endpoint.path} \\
   -H "Authorization: Bearer ${auth}" \\
   -H "Content-Type: application/json" \\
-  -d '${stringify(buildBody(endpoint.id, model, prompt))}'`;
+  -d ${quoteCurlBody(bodyText || '{}')}`;
+}
+
+function getBodyModel(value: unknown) {
+  const record = asRecord(value);
+  return typeof record?.model === 'string' ? record.model : '';
 }
 
 function methodClass(method: EndpointItem['method']) {
@@ -410,7 +437,12 @@ export function PlaygroundClient() {
   const [selectedId, setSelectedId] = useState(defaultEndpoint.id);
   const [availableModels, setAvailableModels] = useState<string[]>([]);
   const [model, setModel] = useState('');
-  const [prompt, setPrompt] = useState('用三句话介绍小恐龙 API 的接入方式。');
+  const [prompt, setPrompt] = useState(defaultPrompt);
+  const [bodyText, setBodyText] = useState(() =>
+    stringify(buildBody(defaultEndpoint.id, modelPlaceholder, defaultPrompt))
+  );
+  const [bodyDirty, setBodyDirty] = useState(false);
+  const [bodyError, setBodyError] = useState('');
   const [result, setResult] = useState<PlaygroundResponse | null>(null);
   const [error, setError] = useState('');
   const [modelsError, setModelsError] = useState('');
@@ -418,6 +450,7 @@ export function PlaygroundClient() {
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState<CopyTarget | ''>('');
   const [requestPreview, setRequestPreview] = useState<RequestPreview>('body');
+  const [modelsOpen, setModelsOpen] = useState(false);
 
   const endpoints = endpointGroups.flatMap((group) => group.items);
   const selectedEndpoint =
@@ -429,8 +462,8 @@ export function PlaygroundClient() {
     [prompt, selectedEndpoint.id, selectedModel]
   );
   const curl = useMemo(
-    () => buildCurl(selectedEndpoint, apiKey, selectedModel, prompt),
-    [apiKey, prompt, selectedEndpoint, selectedModel]
+    () => buildCurl(selectedEndpoint, apiKey, bodyText),
+    [apiKey, bodyText, selectedEndpoint]
   );
   const assistantOutput = result ? extractAssistantOutput(result.data) : '';
   const responseModelIds = result ? extractModelIds(result.data) : [];
@@ -439,20 +472,50 @@ export function PlaygroundClient() {
   const activeRequestPreview =
     requestPreview === 'body' && requestBody ? 'body' : 'curl';
   const requestPreviewContent =
-    activeRequestPreview === 'body' && requestBody
-      ? stringify(requestBody)
-      : curl;
+    activeRequestPreview === 'body' && requestBody ? bodyText : curl;
   const requestPreviewTitle =
     activeRequestPreview === 'body' ? 'JSON Body' : 'cURL';
   const responseExample = buildResponseExample(
     selectedEndpoint.id,
     selectedModel
   );
+  const canEditBody = activeRequestPreview === 'body' && Boolean(requestBody);
+
+  useEffect(() => {
+    setBodyDirty(false);
+    setBodyError('');
+    setRequestPreview(selectedEndpoint.method === 'POST' ? 'body' : 'curl');
+  }, [selectedEndpoint.id, selectedEndpoint.method]);
+
+  useEffect(() => {
+    if (!bodyDirty) {
+      setBodyText(requestBody ? stringify(requestBody) : '');
+    }
+  }, [bodyDirty, requestBody]);
 
   async function copy(text: string, target: CopyTarget) {
     await navigator.clipboard.writeText(text);
     setCopied(target);
     window.setTimeout(() => setCopied(''), 1400);
+  }
+
+  function formatBody() {
+    const parsed = parseJsonBody(bodyText);
+
+    if (!parsed.ok) {
+      setBodyError(`JSON 格式不正确：${parsed.message}`);
+      return;
+    }
+
+    setBodyText(stringify(parsed.value));
+    setBodyDirty(true);
+    setBodyError('');
+  }
+
+  function resetBody() {
+    setBodyText(requestBody ? stringify(requestBody) : '');
+    setBodyDirty(false);
+    setBodyError('');
   }
 
   async function loadModels(options: { showResult?: boolean } = {}) {
@@ -495,6 +558,7 @@ export function PlaygroundClient() {
       setModel((current) =>
         current && ids.includes(current) ? current : ids[0]
       );
+      setModelsOpen(false);
       return ids;
     } catch (err) {
       const message =
@@ -519,6 +583,26 @@ export function PlaygroundClient() {
     }
 
     let requestModel = model || availableModels[0] || '';
+    let editableRequestBody: unknown;
+
+    if (selectedEndpoint.method === 'POST') {
+      const parsedBody = parseJsonBody(bodyText);
+
+      if (!parsedBody.ok) {
+        setRequestPreview('body');
+        setBodyError(`JSON 格式不正确：${parsedBody.message}`);
+        setError('请求体 JSON 还不合法，修好后再发送。');
+        return;
+      }
+
+      editableRequestBody = parsedBody.value;
+      const bodyModel = getBodyModel(editableRequestBody);
+
+      if (bodyModel && bodyModel !== modelPlaceholder) {
+        requestModel = bodyModel;
+      }
+    }
+
     if (selectedEndpoint.method === 'POST' && !requestModel) {
       const ids = await loadModels();
       requestModel = ids[0] || '';
@@ -527,6 +611,26 @@ export function PlaygroundClient() {
         setError('请先通过 /v1/models 获取可用模型，再发送请求。');
         return;
       }
+    }
+
+    if (selectedEndpoint.method === 'POST') {
+      const bodyRecord = asRecord(editableRequestBody);
+      const bodyModel = getBodyModel(editableRequestBody);
+
+      if (
+        bodyRecord &&
+        requestModel &&
+        (!bodyModel || bodyModel === modelPlaceholder)
+      ) {
+        editableRequestBody = {
+          ...bodyRecord,
+          model: requestModel,
+        };
+        setBodyText(stringify(editableRequestBody));
+        setBodyDirty(true);
+      }
+
+      setBodyError('');
     }
 
     setLoading(true);
@@ -544,6 +648,7 @@ export function PlaygroundClient() {
           endpoint: runnableId,
           model: requestModel,
           prompt,
+          requestBody: editableRequestBody,
         }),
       });
 
@@ -632,7 +737,9 @@ export function PlaygroundClient() {
                       onClick={() => {
                         setSelectedId(item.id);
                         setError('');
+                        setBodyError('');
                         setResult(null);
+                        setModelsOpen(false);
                       }}
                       className={cn(
                         'flex w-full items-start gap-2 rounded-md px-2 py-2 text-left text-sm transition-colors',
@@ -857,6 +964,7 @@ export function PlaygroundClient() {
                         onChange={(event) => {
                           setApiKey(event.target.value);
                           setModelsError('');
+                          setModelsOpen(false);
                         }}
                         placeholder="sk-your-api-key"
                         type="password"
@@ -895,23 +1003,68 @@ export function PlaygroundClient() {
                             </span>
                           )}
                         </span>
-                        <select
-                          value={model}
-                          onChange={(event) => setModel(event.target.value)}
-                          disabled={
-                            modelsLoading || availableModels.length === 0
-                          }
-                          className="h-10 rounded-md border border-[#dfe2eb] bg-white px-3 text-sm outline-none focus:border-[#0891b2]"
-                        >
-                          {availableModels.length === 0 && (
-                            <option value="">先获取模型列表</option>
+                        <div className="relative">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              availableModels.length > 0 &&
+                              !modelsLoading &&
+                              setModelsOpen((open) => !open)
+                            }
+                            disabled={
+                              modelsLoading || availableModels.length === 0
+                            }
+                            className={cn(
+                              'flex h-10 w-full items-center justify-between gap-3 rounded-md border border-[#dfe2eb] bg-white px-3 text-left text-sm transition-colors outline-none hover:border-[#b7dce6] focus:border-[#0891b2] disabled:cursor-not-allowed disabled:bg-[#f7f9fc] disabled:text-[#9aa1b1]',
+                              modelsOpen &&
+                                'border-[#0891b2] shadow-[0_0_0_3px_rgba(8,145,178,0.10)]'
+                            )}
+                          >
+                            <span className="min-w-0 truncate">
+                              {selectedModel === modelPlaceholder
+                                ? '先获取模型列表'
+                                : selectedModel}
+                            </span>
+                            <ChevronDown
+                              className={cn(
+                                'size-4 shrink-0 text-[#8a91a3] transition-transform',
+                                modelsOpen && 'rotate-180 text-[#0891b2]'
+                              )}
+                            />
+                          </button>
+                          {modelsOpen && availableModels.length > 0 && (
+                            <div className="absolute z-20 mt-1 w-full overflow-hidden rounded-md border border-[#c9e8ef] bg-white shadow-[0_12px_28px_rgba(15,47,56,0.12)]">
+                              <div className="apifox-scrollbar max-h-56 overflow-auto p-1">
+                                {availableModels.map((item) => {
+                                  const active = item === selectedModel;
+
+                                  return (
+                                    <button
+                                      key={item}
+                                      type="button"
+                                      onClick={() => {
+                                        setModel(item);
+                                        setModelsOpen(false);
+                                      }}
+                                      className={cn(
+                                        'flex min-h-9 w-full items-center justify-between gap-3 rounded px-2 py-1.5 text-left text-sm text-[#303643] hover:bg-[#eefaff]',
+                                        active &&
+                                          'bg-[#e6f7fb] font-medium text-[#087990]'
+                                      )}
+                                    >
+                                      <span className="min-w-0 truncate">
+                                        {item}
+                                      </span>
+                                      {active && (
+                                        <CheckCircle2 className="size-3.5 shrink-0" />
+                                      )}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
                           )}
-                          {availableModels.map((item) => (
-                            <option key={item} value={item}>
-                              {item}
-                            </option>
-                          ))}
-                        </select>
+                        </div>
                         {modelsError && (
                           <span className="text-xs leading-5 text-red-600">
                             {modelsError}
@@ -944,10 +1097,15 @@ export function PlaygroundClient() {
                     <div>
                       <div className="flex items-center gap-2 text-sm font-semibold">
                         <Code2 className="size-4 text-[#0891b2]" />
-                        请求预览
+                        请求编辑
                       </div>
                       <div className="mt-1 text-xs text-[#8a91a3]">
                         当前展示：{requestPreviewTitle}
+                        {canEditBody && (
+                          <span className="ml-2 text-[#087990]">
+                            {bodyDirty ? '已手动修改' : '跟随参数生成'}
+                          </span>
+                        )}
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -999,9 +1157,54 @@ export function PlaygroundClient() {
                       </button>
                     </div>
                   </div>
-                  <pre className="apifox-scrollbar apifox-code-block max-h-[360px] min-h-64 overflow-auto rounded-md border border-[#d9e8ef] p-3 text-xs leading-5 text-[#303643]">
-                    <code>{requestPreviewContent}</code>
-                  </pre>
+                  {canEditBody && (
+                    <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                      <div className="text-xs text-[#8a91a3]">
+                        这里是实际发送的 JSON Body，改完会同步到发送请求和
+                        cURL。
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={formatBody}
+                          className="rounded px-2 py-1 text-xs font-medium text-[#087990] hover:bg-[#e6f7fb]"
+                        >
+                          格式化
+                        </button>
+                        <button
+                          type="button"
+                          onClick={resetBody}
+                          className="rounded px-2 py-1 text-xs text-[#697184] hover:bg-[#f4f6fb]"
+                        >
+                          重置
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                  {canEditBody ? (
+                    <textarea
+                      value={bodyText}
+                      onChange={(event) => {
+                        setBodyText(event.target.value);
+                        setBodyDirty(true);
+                        setBodyError('');
+                      }}
+                      spellCheck={false}
+                      className={cn(
+                        'apifox-scrollbar apifox-code-block block max-h-[360px] min-h-64 w-full resize-y overflow-auto rounded-md border p-3 font-mono text-xs leading-5 text-[#303643] outline-none focus:border-[#0891b2]',
+                        bodyError ? 'border-red-300' : 'border-[#d9e8ef]'
+                      )}
+                    />
+                  ) : (
+                    <pre className="apifox-scrollbar apifox-code-block max-h-[360px] min-h-64 overflow-auto rounded-md border border-[#d9e8ef] p-3 text-xs leading-5 text-[#303643]">
+                      <code>{requestPreviewContent}</code>
+                    </pre>
+                  )}
+                  {bodyError && canEditBody && (
+                    <div className="mt-2 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs leading-5 text-red-700">
+                      {bodyError}
+                    </div>
+                  )}
                 </div>
               </div>
             </section>

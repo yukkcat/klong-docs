@@ -7,6 +7,7 @@ const requestSchema = z.object({
   endpoint: z.enum(['models', 'chat', 'responses', 'embeddings']),
   model: z.string().optional(),
   prompt: z.string().optional(),
+  requestBody: z.unknown().optional(),
 });
 
 const endpointConfig = {
@@ -95,11 +96,11 @@ export async function POST(req: Request) {
     );
   }
 
-  const { apiKey, endpoint, model, prompt } = parsed.data;
+  const { apiKey, endpoint, model, prompt, requestBody } = parsed.data;
   const config = endpointConfig[endpoint];
   const requestModel = model ?? '';
 
-  if (config.method === 'POST' && !requestModel) {
+  if (config.method === 'POST' && requestBody === undefined && !requestModel) {
     return Response.json(
       {
         status: 400,
@@ -113,16 +114,18 @@ export async function POST(req: Request) {
     );
   }
 
+  const upstreamBody =
+    config.method === 'POST'
+      ? (requestBody ?? buildBody(endpoint, requestModel, prompt))
+      : undefined;
+
   const upstream = await fetch(`https://api.klong.lat/v1${config.path}`, {
     method: config.method,
     headers: {
       Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
-    body:
-      config.method === 'POST'
-        ? JSON.stringify(buildBody(endpoint, requestModel, prompt))
-        : undefined,
+    body: upstreamBody === undefined ? undefined : JSON.stringify(upstreamBody),
   });
 
   const text = await upstream.text();
